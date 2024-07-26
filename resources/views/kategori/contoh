@@ -1,0 +1,43 @@
+<div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+
+
+        <div class="card">
+            <div class="row">
+                <div class="col">
+                    <h3 class="card-header">Kategori</h5>
+                </div>
+                <div class="col">
+                    <a href="#" class="btn btn-primary">Link</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col">
+                <div class="card">
+                    <img class="card-img-top" src="{{asset('assets/dashboard/img/emotikon/marah.png')}}" alt="Card image cap" />
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Cras justo odio</li>
+                        <li class="list-group-item">Vestibulum at eros</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="javascript:void(0)" class="card-link">Card link</a>
+                        <a href="javascript:void(0)" class="card-link">Another link</a>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <!--/ Card layout -->
+    </div>
+    <!-- / Content -->
+</div>
