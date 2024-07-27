@@ -16,16 +16,19 @@ return new class extends Migration
             $table->string('nama_kategori_pagi')->nullable();
             $table->string('gambar_pagi')->nullable();
             $table->string('keterangan_pagi')->nullable();
+            $table->string('waktu_pagi')->nullable();
             $table->text('text_cerita_pagi')->nullable();
 
             $table->string('nama_kategori_siang')->nullable();
             $table->string('gambar_siang')->nullable();
             $table->string('keterangan_siang')->nullable();
+            $table->string('waktu_siang')->nullable();
             $table->text('text_cerita_siang')->nullable();
 
             $table->string('nama_kategori_sore')->nullable();
             $table->string('gambar_sore')->nullable();
             $table->string('keterangan_sore')->nullable();
+            $table->string('waktu_sore')->nullable();
             $table->text('text_cerita_sore')->nullable();
 
             $table->unsignedTinyInteger('status')->default(1);

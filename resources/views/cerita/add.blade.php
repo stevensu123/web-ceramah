@@ -40,7 +40,7 @@
 
                                     <div id="accordionPopoutIcon-1" class="accordion-collapse collapse " data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                        <input type="hiddne" value="{{$waktu[0]->title}}">
+                                        <input type="hiddne" name="waktu_pagi" value="{{$waktu[0]->title}}">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select1" name="gambar" onchange="showImageAndText(1)" class="form-select">
@@ -88,7 +88,7 @@
                                     </h2>
                                     <div id="accordionPopoutIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hiddne" value="{{$waktu[1]->title}}">
+                                            <input type="hiddne" name="waktu_siang" value="{{$waktu[1]->title}}">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select2" name="gambar" onchange="showImageAndText(2)" class="form-select">
@@ -136,7 +136,7 @@
                                     </h2>
                                     <div id="accordionPopoutIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hiddne" value="{{$waktu[2]->title}}">
+                                            <input type="hiddne" name="waktu_sore" value="{{$waktu[2]->title}}">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select3" name="gambar" onchange="showImageAndText(3)" class="form-select">

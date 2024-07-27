@@ -185,6 +185,11 @@ class CeritaController extends Controller
             $cerita->kategoris()->attach($cerita_kategori);
         }
 
+        if (!empty($categories)) {
+            $cerita_kategori = Kategori::whereIn('nama_kategori', $categories)->pluck('id')->toArray();
+            $cerita->kategoris()->attach($cerita_kategori);
+        }
+
         // $cerita = Cerita::create([
         //     'gambar_pagi'     => $filename1,
         //     'keterangan_pagi'     => $request->keterangan_pagi,
