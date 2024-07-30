@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/cerita/view/create', [CeritaController::class, 'create_view'])->name('cerita.create_view');
     Route::get('/cerita/data/{cerita}', [CeritaController::class, 'show_data'])->name('cerita.show_data');
     Route::get('/cerita/view/date-expired', [CeritaController::class, 'show_data_expired_date'])->name('cerita.date_expired');
+    Route::get('/cerita/view/date-belum-mulai', [CeritaController::class, 'show_data_belum_date'])->name('cerita.date_belum');
     Route::get('/cerita/edit/{id}', [CeritaController::class, 'edit'])->name('cerita.edit');
 
 

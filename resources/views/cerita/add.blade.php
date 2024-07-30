@@ -40,7 +40,7 @@
 
                                     <div id="accordionPopoutIcon-1" class="accordion-collapse collapse " data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                        <input type="hiddne" name="waktu_pagi" value="{{$waktu[0]->title}}">
+                                            <input type="hidden" id="input_pagi" name="waktu_pagi" value="">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select1" name="gambar" onchange="showImageAndText(1)" class="form-select">
@@ -88,7 +88,7 @@
                                     </h2>
                                     <div id="accordionPopoutIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hiddne" name="waktu_siang" value="{{$waktu[1]->title}}">
+                                            <input type="hiddne" id="input_siang" name="waktu_siang" value="">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select2" name="gambar" onchange="showImageAndText(2)" class="form-select">
@@ -136,7 +136,7 @@
                                     </h2>
                                     <div id="accordionPopoutIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hiddne" name="waktu_sore" value="{{$waktu[2]->title}}">
+                                            <input type="hiddne" id="input_sore" name="waktu_sore" value="">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
                                                 <select id="select3" name="gambar" onchange="showImageAndText(3)" class="form-select">
@@ -399,6 +399,47 @@
     // Panggil fungsi untuk pertama kali saat halaman dimuat
     setAccordionAvailability();
 </script> -->
+<!-- <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const now = new Date();
+        const hour = now.getHours();
+
+        // Define time ranges
+        const morningStart = parseInt("{{$waktu[0]->jam_mulai}}", 10);
+        const morningEnd = parseInt("{{$waktu[0]->jam_selesai}}", 10);
+        const afternoonStart = parseInt("{{$waktu[1]->jam_mulai}}", 10);
+        const afternoonEnd = parseInt("{{$waktu[1]->jam_selesai}}", 10);
+        const eveningStart = parseInt("{{$waktu[2]->jam_mulai}}", 10);
+        const eveningEnd = parseInt("{{$waktu[2]->jam_selesai}}", 10);
+
+        // Hide all accordion items initially
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        accordionItems.forEach(item => item.style.display = 'none');
+
+        // Show accordion items based on current time
+        if (hour >= morningStart && hour < morningEnd) {
+            document.getElementById('headingMorning').style.display = 'block';
+        }
+        if (hour >= afternoonStart && hour < afternoonEnd) {
+            document.getElementById('headingAfternoon').style.display = 'block';
+        }
+        if (hour >= eveningStart && hour < eveningEnd) {
+            document.getElementById('headingEvening').style.display = 'block';
+        }
+
+        // Always display past time headings
+        if (hour >= morningEnd) {
+            document.getElementById('headingMorning').style.display = 'block';
+        }
+        if (hour >= afternoonEnd) {
+            document.getElementById('headingAfternoon').style.display = 'block';
+        }
+        if (hour >= eveningEnd) {
+            document.getElementById('headingEvening').style.display = 'block';
+        }
+    });
+</script> -->
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const now = new Date();
@@ -412,6 +453,43 @@
         const eveningStart = parseInt("{{$waktu[2]->jam_mulai}}", 10);
         const eveningEnd = parseInt("{{$waktu[2]->jam_selesai}}", 10);
 
+        const input_pagi = document.getElementById('input_pagi');
+        const input_siang = document.getElementById('input_siang');
+        const input_sore = document.getElementById('input_sore');
+
+
+        // Set input values based on time
+        if (hour >= morningStart && hour < morningEnd) {
+            input_pagi.value = "{{$waktu[0]->title}}";
+        } else {
+            input_pagi.value = '';
+        }
+
+        if (hour >= afternoonStart && hour < afternoonEnd) {
+            input_siang.value = "{{$waktu[1]->title}}";
+        } else {
+            input_siang.value = '';
+        }
+
+        if (hour >= eveningStart && hour < eveningEnd) {
+            input_sore.value = "{{$waktu[2]->title}}";
+        } else {
+            input_sore.value = '';
+        }
+
+        if (hour >= morningEnd) {
+            input_pagi.value = "{{$waktu[0]->title}}";
+        }
+        if (hour >= afternoonEnd) {
+            input_siang.value = "{{$waktu[1]->title}}";
+        }
+        if (hour >= eveningEnd) {
+            input_sore.value = "{{$waktu[2]->title}}";
+        }
+
+        console.log("Pagi Value After:", input_pagi.value);
+        console.log("Siang Value After:", input_siang.value);
+        console.log("Sore Value After:", input_sore.value);
         // Hide all accordion items initially
         const accordionItems = document.querySelectorAll('.accordion-item');
         accordionItems.forEach(item => item.style.display = 'none');

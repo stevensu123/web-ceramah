@@ -9,8 +9,18 @@ class Waktu extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "title",
+        "jam_mulai",
+        "jam_selesai",
+        "status",
+   
+    ];
+
+
     public function cerita()
     {
         return $this->belongsToMany(Cerita::class, 'waktu_cerita');
     }
+
 }
