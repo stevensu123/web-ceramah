@@ -24,56 +24,149 @@
                     </div> -->
                     <div class="card-body">
                         <form action="{{route('cerita.store')}}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="accordion-item card " id="headingAfternoon">
-                                    <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIconTwo">
-                                        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-2" aria-controls="accordionPopoutIcon-2">
-                                            Ceritamu Di {{ $waktu[1]->title}} Hari ini
+                            @csrf
+
+
+
+                            <div class="accordion" id="accordionExample">
+                                @foreach(['pagi' => 'Waktu Pagi', 'siang' => 'Waktu Siang', 'sore' => 'Waktu Sore'] as $key => $label)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ ucfirst($key) }}">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ ucfirst($key) }}" aria-expanded="true" aria-controls="collapse{{ ucfirst($key) }}">
+                                            {{ $label }}
                                         </button>
                                     </h2>
-                                    <div id="accordionPopoutIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
+                                    <div id="collapse{{ ucfirst($key) }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="heading{{ ucfirst($key) }}" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
-                                            <input type="hiddne" name="waktu_siang" value="{{$waktu[1]->title}}">
-                                            <div class="mb-3">
-                                                <label class="form-label" class="form-label">Pilih Kategori</label>
-                                                <select id="select2" name="gambar" onchange="showImageAndText(2)" class="form-select">
-                                                    <option value="">Default select</option>
-                                                    @foreach ($kategori as $kt)
-                                                    <option value="{{$kt->nama_kategori}}">{{$kt->nama_kategori}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div id="image-container2" class="mt-3" style="display: none;">
-                                                <!-- Tempat untuk menampilkan gambar -->
-                                                <img id="img2" class="select-img" src="" alt="selected">
+                                            @forelse($data[$key] as $cerita)
+                                            <div class="card mb-3">
+                                                <!-- <img src="{{ asset('storage/' . $cerita->gambar) }}" class="card-img-top" alt="{{ $cerita->judul }}">
+                                                <div class="card-body">
+                                                    <input type="text" value="{{ $cerita->getNamaKategoriByWaktu($key) }}">
+                                                 
+                                                    <p class="card-text">{{ $cerita->isi }}</p>
+                                                    <p class="card-text"><small class="text-muted">{{ $cerita->kategoris->pluck('nama')->join(', ') }}</small></p>
+                                                </div> -->
+                                                <div class="row">
+                                                    <!-- left column -->
+                                                    <div class="col-md-3">
+                                                        <div class="text-center">
+                                                            <img src="https://png.pngitem.com/pimgs/s/150-1503945_transparent-user-png-default-user-image-png-png.png" class="avatar img-circle" alt="avatar">
+                                                            <h6>Upload a different photo...</h6>
 
+                                                            <input type="file" class="form-control">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- edit form column -->
+                                                    <div class="col-md-9 personal-info">
+                                                        <div class="alert alert-info alert-dismissable">
+                                                            <a class="panel-close close" data-dismiss="alert">×</a>
+                                                            <i class="fa fa-coffee"></i>
+                                                            This is an <strong>.alert</strong>. Use this to show important messages to the user.
+                                                        </div>
+                                                        <h3>Personal info</h3>
+
+                                                        <form class="form-horizontal" role="form">
+                                                            <div class="form-group">
+                                                                <label class="col-md-3 control-label">Username:</label>
+                                                                <div class="col-md-8">
+                                                                    <input class="form-control" type="text" value="janeuser">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-lg-3 control-label">Email:</label>
+                                                                <div class="col-lg-8">
+                                                                    <input class="form-control" type="text" value="janesemail@gmail.com">
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="form-group">
+                                                                <label class="col-md-3 control-label">Password:</label>
+                                                                <div class="col-md-8">
+                                                                    <input class="form-control" type="password" value="11111122333">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3 control-label">Confirm password:</label>
+                                                                <div class="col-md-8">
+                                                                    <input class="form-control" type="password" value="11111122333">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-3 control-label"></label>
+                                                                <div class="col-md-8">
+                                                                    <input type="button" class="btn btn-primary" value="Save Changes">
+                                                                    <span></span>
+                                                                    <input type="reset" class="btn btn-default" value="Cancel">
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div id="file-input-container " style="display: block;">
-                                                <label for="image">Upload gambar:</label>
-                                                <input type="file" name="file2" id="file2">
-                                                @error('file2')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="basic-default-fullname">Nama Kategori</label>
-                                                <input type="text" name="nama_kategori_siang" class="form-control" id="selected-text-name2" placeholder="Default" readonly />
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="basic-default-message">Keterangan</label>
-                                                <h6 style="color: blue; font-size: 10px;" for="">Deskripsi dari Emotikon yang dipilih</h6>
-                                                <textarea id="selected-text2" name="keterangan_siang" class="form-control" readonly></textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="basic-default-message">Cerita Kamu Hari ini</label>
-                                                <h6 style="color: blue; font-size: 10px;  overflow: hidden;  resize: none;" for="">Tempat Memasukan Curhatan isi Hati Kamu</h6>
-                                                <textarea id="selected-text" name="text_cerita_siang" oninput="autoGrow(this)" class="form-control textarea-noscroll"></textarea>
-                                            </div>
+                                            @empty
+                                            <div class="row">
+      <!-- left column -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <img src="https://png.pngitem.com/pimgs/s/150-1503945_transparent-user-png-default-user-image-png-png.png" class="avatar img-circle" alt="avatar">
+          <h6>Upload a different photo...</h6>
+          
+          <input type="file" class="form-control">
+        </div>
+      </div>
+      
+      <!-- edit form column -->
+      <div class="col-md-9 personal-info">
+
+        <h3>Personal info</h3>
+        
+        <form class="form-horizontal" role="form">
+<div class="form-group">
+            <label class="col-md-3 control-label">Username:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" value="janeuser">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Email:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="janesemail@gmail.com">
+            </div>
+          </div>
+         
+          
+          <div class="form-group">
+            <label class="col-md-3 control-label">Password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Confirm password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+              <input type="button" class="btn btn-primary" value="Save Changes">
+              <span></span>
+              <input type="reset" class="btn btn-default" value="Cancel">
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+                                            @endforelse
                                         </div>
                                     </div>
                                 </div>
-
-
+                                @endforeach
+                            </div>
 
 
                     </div>

@@ -229,7 +229,7 @@ class CeritaController extends Controller
 
         if (!empty($waktu)) {
             $cerita_waktu = Waktu::whereIn('title', $waktu)->pluck('id')->toArray();
-            $cerita->waktus()->attach($cerita_waktu);
+            $cerita->waktuCeritas()->attach($cerita_waktu);
         }
 
         // $cerita = Cerita::create([
@@ -274,15 +274,35 @@ class CeritaController extends Controller
      */
     public function edit(string $id)
     {
-        $kategori = Kategori::get();
-        $waktu1 = Waktu::where('title', 'Pagi')->first();
-        $waktu2 = Waktu::where('title', 'Siang')->first();
-        $waktu3 = Waktu::where('title', 'Sore')->first();
+        // $kategori = Kategori::get();
+        // $waktu1 = Waktu::where('title', 'Pagi')->first();
+        // $waktu2 = Waktu::where('title', 'Siang')->first();
+        // $waktu3 = Waktu::where('title', 'Sore')->first();
 
-        // Simpan data dalam array atau koleksi
-        $waktu = [$waktu1, $waktu2, $waktu3];
+        // // Simpan data dalam array atau koleksi
+        // $waktu = [$waktu1, $waktu2, $waktu3];
+        $user_id = auth()->id(); // Ambil user ID
+        $waktuIds = Waktu::pluck('id')->toArray(); // Ambil semua ID waktu (pagi, siang, sore)
+
+        $ceritas = Cerita::with('kategoris', 'waktuCeritas')
+            ->where('user_id', $user_id)
+            ->get();
+
+        $data = [
+            'pagi' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+                return $cerita->waktuCeritas->contains('id', $waktuIds[0]); // ID pagi
+            }),
+            'siang' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+                return $cerita->waktuCeritas->contains('id', $waktuIds[1]); // ID siang
+            }),
+            'sore' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+                return $cerita->waktuCeritas->contains('id', $waktuIds[2]); // ID sore
+            }),
+        ];
+
+        return view('cerita.edit', compact('data'));
      
-        return view('cerita.edit', compact('kategori', 'waktu'));
+        // return view('cerita.edit', compact('kategori', 'waktu'));
     }
 
  

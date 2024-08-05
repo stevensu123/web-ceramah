@@ -1,0 +1,65 @@
+ <!-- <div class="accordion" id="accordionExample">
+    @foreach(['pagi' => 'Waktu Pagi', 'siang' => 'Waktu Siang', 'sore' => 'Waktu Sore'] as $key => $label)
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ ucfirst($key) }}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ ucfirst($key) }}" aria-expanded="true" aria-controls="collapse{{ ucfirst($key) }}">
+                    {{ $label }}
+                </button>
+            </h2>
+            <div id="collapse{{ ucfirst($key) }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="heading{{ ucfirst($key) }}" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    @forelse($data[$key] as $cerita)
+                        <div class="card mb-3">
+                            <img src="{{ asset('storage/' . $cerita->gambar) }}" class="card-img-top" alt="{{ $cerita->judul }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $cerita->nama_kategori_pagi }}</h5>
+                                <p class="card-text">{{ $cerita->isi }}</p>
+                                <p class="card-text"><small class="text-muted">{{ $cerita->kategoris->pluck('nama')->join(', ') }}</small></p>
+                            </div>
+                        </div>
+                    @empty
+                        <p>Belum ada cerita untuk waktu {{ $label }}. <a href="{{ route('cerita.create') }}" class="btn btn-primary">Update Data Cerita</a></p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div> -->
+
+
+
+$user_id = auth()->id();
+
+// Ambil ID waktu
+$waktuIds = Waktu::pluck('id')->toArray();
+
+// Pastikan $waktuIds memiliki ID yang benar untuk pagi, siang, sore
+$pagiId = $waktuIds[0]; // ID pagi
+$siangId = $waktuIds[1]; // ID siang
+$soreId = $waktuIds[2]; // ID sore
+
+// Ambil satu data cerita untuk setiap waktu
+$cerita_pagi = Cerita::with('kategoris', 'waktuCeritas')
+    ->where('user_id', $user_id)
+    ->whereHas('waktuCeritas', function ($query) use ($pagiId) {
+        $query->where('waktu_cerita.id', $pagiId); // Tambahkan alias tabel
+    })
+    ->first(); // Ambil satu cerita untuk pagi
+
+$cerita_siang = Cerita::with('kategoris', 'waktuCeritas')
+    ->where('user_id', $user_id)
+    ->whereHas('waktuCeritas', function ($query) use ($siangId) {
+        $query->where('waktu_cerita.id', $siangId); // Tambahkan alias tabel
+    })
+    ->first(); // Ambil satu cerita untuk siang
+
+$cerita_sore = Cerita::with('kategoris', 'waktuCeritas')
+    ->where('user_id', $user_id)
+    ->whereHas('waktuCeritas', function ($query) use ($soreId) {
+        $query->where('waktu_cerita.id', $soreId); // Tambahkan alias tabel
+    })
+    ->first(); // Ambil satu cerita untuk sore
+
+
+// Kirim data ke view
+return view('cerita.exists', compact('cerita_pagi', 'cerita_siang', 'cerita_sore'));

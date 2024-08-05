@@ -42,7 +42,40 @@ class Cerita extends Model
     {
         return $this->belongsToMany(Waktu::class, 'waktu_cerita');
     }
+
+    public function getKeteranganByWaktu($waktuKey)
+    {
+        $fields = [
+            'pagi' => 'keterangan_pagi',
+            'siang' => 'keterangan_siang',
+            'sore' => 'keterangan_sore'
+        ];
+
+        return $this->{$fields[$waktuKey]} ?? 'Keterangan Tidak Ditemukan'; // Ganti dengan keterangan default jika tidak ada
+    }
     
+    public function getGambarByWaktu($waktuKey)
+    {
+        $fields = [
+            'pagi' => 'gambar_pagi',
+            'siang' => 'gambar_siang',
+            'sore' => 'gambar_sore'
+        ];
+
+        return $this->{$fields[$waktuKey]} ?? 'default.jpg'; // Ganti dengan gambar default jika tidak ada
+    }
+
+    public function getNamaKategoriByWaktu($waktuKey)
+    {
+        $fields = [
+            'pagi' => 'nama_kategori_pagi',
+            'siang' => 'nama_kategori_siang',
+            'sore' => 'nama_kategori_sore'
+        ];
+
+        return $this->{$fields[$waktuKey]} ?? 'Kategori Tidak Ditemukan';
+    }
+
 
     // //mengambil waktucerita
     // public function waktuCeritas()
