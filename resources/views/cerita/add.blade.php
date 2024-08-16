@@ -6,15 +6,15 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Vertical Layouts</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Cerita</h4>
 
         <!-- Basic Layout -->
         <div class="row">
             <div class="col-xl">
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Basic Layout</h5>
-                        <small class="text-muted float-end">Default label</small>
+                        <h5 class="mb-0">Create Cerita</h5>
+                        <small class="text-muted float-end">Cerita </small>
                     </div>
                     <div class="deskripsi-label">
                         <label for="">
@@ -34,7 +34,7 @@
                                 <div class="accordion-item card active " id="headingMorning">
                                     <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIconOne">
                                         <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-1" aria-controls="accordionPopoutIcon-1">
-                                            Ceritamu Di {{ $waktu[0]->title}} Hari ini
+                                            Ceritamu Di {{ $waktu[0]->title}} Hari ini Jam {{$waktu[0]->jam_mulai}} - {{$waktu[0]->jam_selesai}}
                                         </button>
                                     </h2>
 
@@ -83,7 +83,7 @@
                                 <div class="accordion-item card " id="headingAfternoon">
                                     <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIconTwo">
                                         <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-2" aria-controls="accordionPopoutIcon-2">
-                                            Ceritamu Di {{ $waktu[1]->title}} Hari ini
+                                            Ceritamu Di {{ $waktu[1]->title}} Hari ini Jam {{$waktu[1]->jam_mulai}} - {{$waktu[1]->jam_selesai}}
                                         </button>
                                     </h2>
                                     <div id="accordionPopoutIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
@@ -131,7 +131,7 @@
                                 <div class="accordion-item card " id="headingEvening">
                                     <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIconThree">
                                         <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-3" aria-expanded="true" aria-controls="accordionPopoutIcon-3" role="tabpanel">
-                                            Ceritamu Di {{ $waktu[2]->title}} Hari ini
+                                            Ceritamu Di {{ $waktu[2]->title}} Hari ini Jam {{$waktu[2]->jam_mulai}} - {{$waktu[2]->jam_selesai}}
                                         </button>
                                     </h2>
                                     <div id="accordionPopoutIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
@@ -180,8 +180,8 @@
                             <br>
                             <label class="form-label" for="basic-default-message">Status</label>
                             <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" name="status" value="1" id="switch" onchange="toggleSwitch()" id="flexSwitchCheckChecked" />
-                                <label class="form-check-label" id="switch-label" for="switch">Inactive</label>
+                            <input class="form-check-input" type="checkbox" checked name="status" value="1" id="switch" />
+                            <label class="form-check-label" id="switch-label" for="switch">Active</label>
                             </div>
                             <button type="submit" class="btn btn-primary">Tambah Data</button>
                         </form>
@@ -197,6 +197,7 @@
 @endsection
 
 @section('javascript')
+<!--- javascript select gambar ke input ---->
 <script>
     // function showImage() {
     //     var selectBox = document.getElementById("image-select");
@@ -223,7 +224,6 @@
         var selectedValue = selectBox.value;
         // Periksa jika nilai yang dipilih bukan default
         if (selectedValue !== "") {
-
             image.src = "{{asset ('assets/dashboard/img/emotikon')}}/" + selectedValue + ".png"; // Tampilkan gambar sesuai dengan nilai yang dipilih
             imageContainer.style.display = "block"; // Tampilkan kontainer gambar
 
@@ -256,13 +256,8 @@
                     dataTransfer.items.add(file);
                     fileInput.files = dataTransfer.files;
                 });
-
-
-
             textArea.style.display = "block";
             input_name.style.display = "block";
-
-
         } else {
             image.src = ""; // Kosongkan src gambar
             imageContainer.style.display = "none"; // Sembunyikan kontainer gambar
@@ -272,179 +267,65 @@
             input_name.style.display = ""; // Sembunyikan area teks
         }
     }
-
-    function toggleSwitch() {
-        var switchElement = document.getElementById("switch");
-        var switchLabel = document.getElementById("switch-label");
-
-        if (switchElement.checked) {
-            switchLabel.innerHTML = "Active";
-            switchLabel.classList.remove("text-danger"); // Optional: Remove danger class
-            switchLabel.classList.add("text-success"); // Optional: Add success class
-        } else {
-            switchLabel.innerHTML = "Inactive";
-            switchLabel.classList.remove("text-success"); // Optional: Remove success class
-            switchLabel.classList.add("text-danger"); // Optional: Add danger class
-        }
-    }
-
     function autoGrow(element) {
         element.style.height = "auto"; /* Reset height */
         element.style.height = (element.scrollHeight) + "px"; /* Set height to scrollHeight */
     }
+</script>
+<!--- end javascript select gambar ke input ---->
 
+<!--- javascript mendapatkan tanggal hari ini ---->
+<script>
     // Mendapatkan tanggal hari ini
     //     const today = new Date();
-
     //     // Mendapatkan hari dalam seminggu (0-6) dimana 0 adalah Minggu
     //     const dayOfWeek = today.getDay();
-
     //     // Array nama hari dalam seminggu
     //     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-
     //     // Mendapatkan nama hari
     //     const dayName = days[dayOfWeek];
-
     //     // Mendapatkan tanggal
     //     const day = today.getDate();
-
     //     // Mendapatkan bulan (dimulai dari 0, jadi perlu ditambah 1)
     //     const month = today.getMonth() + 1;
-
     //     // Mendapatkan tahun
     //     const year = today.getFullYear();
-
     //     // Format tanggal lengkap
     //     const formattedDate = ` ${day}-${month}-${year}`;
     //     const formattedHari = ` ${dayName},`;
     //     // Menampilkan tanggal di dashboard
     //     document.getElementById('tanggal-hari-ini').innerText = formattedDate;
     //     document.getElementById('hari-ini').innerText = formattedHari;
-    // 
 </script>
+<!--- end javascript mendapatkan tanggal hari ini ---->
 
-<!-- <script>
-    var currentTime = new Date();
-    var currentHour = currentTime.getHours();
+<!--- javascript mengatur status active/inactive ---->
+<script>
+      function updateLabel() {
+        var switchElement = document.getElementById("switch");
+        var switchLabel = document.getElementById("switch-label");
+        
+        // Update value based on checkbox status
+        switchElement.value = switchElement.checked ? "1" : "0";
 
-    // Atur batasan waktu untuk setiap accordion-item
-    var morningStart = 8; // Pagi dimulai dari pukul 08:00
-    var morningEnd = 11; // Pagi berakhir pada pukul 11:59
-    var afternoonStart = 12; // Siang dimulai dari pukul 12:00
-    var afternoonEnd = 17; // Siang berakhir pada pukul 17:59
-    var eveningStart = 18; // Sore dimulai dari pukul 18:00
-    var eveningEnd = 23; // Sore berakhir pada pukul 23:59
-
-    // Ambil elemen-elemen accordion-item
-    var morningAccordion = document.getElementById('headingMorning');
-    var afternoonAccordion = document.getElementById('headingAfternoon');
-    var eveningAccordion = document.getElementById('headingEvening');
-
-    // Fungsi untuk menampilkan alert jika diakses di luar waktu yang ditentukan
-    function showAlert() {
-        alert("Maaf, Anda tidak bisa mengakses ini saat ini. Harap coba lagi pada waktu yang sesuai.");
+        // Update label text and class
+        switchLabel.innerHTML = switchElement.checked ? "Active" : "Inactive";
+        switchLabel.classList.toggle("text-success", switchElement.checked);
+        switchLabel.classList.toggle("text-danger", !switchElement.checked);
     }
 
-    // Fungsi untuk mengatur ketersediaan accordion-item berdasarkan waktu
-    function setAccordionAvailability() {
-        // Pagi
-        if (currentHour >= morningStart && currentHour <= morningEnd) {
-            morningAccordion.classList.remove('disabled');
-            morningAccordion.addEventListener('click', function() {
-                alert("Anda menutup accordion-item Pagi.");
-                // Logic untuk membuka accordion-item pagi
+    document.getElementById("switch").addEventListener("change", updateLabel);
 
-            });
-        } else {
-            morningAccordion.classList.add('disabled');
-            morningAccordion.removeEventListener('click', function() {
-                // Logic untuk membuka accordion-item pagi
-                alert("Anda membuka accordion-item Pagi.");
+    // Set initial label and value based on the initial state of the checkbox
+    document.addEventListener("DOMContentLoaded", updateLabel);
+</script>
+<!--- end javascript status active/inactive --->
 
-            });
-            morningAccordion.addEventListener('click', showAlert);
-        }
-
-        // Siang
-        if (currentHour >= afternoonStart && currentHour <= afternoonEnd) {
-            afternoonAccordion.classList.remove('disabled');
-            afternoonAccordion.addEventListener('click', function() {
-                alert("Anda membuka accordion-item Siang.");
-                // Logic untuk membuka accordion-item siang
-            });
-        } else {
-            afternoonAccordion.classList.add('disabled');
-            afternoonAccordion.removeEventListener('click', function() {
-                alert("Anda menutup accordion-item Siang.");
-            });
-            afternoonAccordion.addEventListener('click', showAlert);
-        }
-
-        // Sore
-        if (currentHour >= eveningStart && currentHour <= eveningEnd) {
-            eveningAccordion.classList.remove('disabled');
-            eveningAccordion.addEventListener('click', function() {
-                alert("Anda membuka accordion-item Sore.");
-                // Logic untuk membuka accordion-item sore
-            });
-        } else {
-            eveningAccordion.classList.add('disabled');
-            eveningAccordion.removeEventListener('click', function() {
-                // Logic untuk membuka accordion-item sore
-            });
-            eveningAccordion.addEventListener('click', showAlert);
-        }
-    }
-
-    // Panggil fungsi untuk pertama kali saat halaman dimuat
-    setAccordionAvailability();
-</script> -->
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const now = new Date();
-        const hour = now.getHours();
-
-        // Define time ranges
-        const morningStart = parseInt("{{$waktu[0]->jam_mulai}}", 10);
-        const morningEnd = parseInt("{{$waktu[0]->jam_selesai}}", 10);
-        const afternoonStart = parseInt("{{$waktu[1]->jam_mulai}}", 10);
-        const afternoonEnd = parseInt("{{$waktu[1]->jam_selesai}}", 10);
-        const eveningStart = parseInt("{{$waktu[2]->jam_mulai}}", 10);
-        const eveningEnd = parseInt("{{$waktu[2]->jam_selesai}}", 10);
-
-        // Hide all accordion items initially
-        const accordionItems = document.querySelectorAll('.accordion-item');
-        accordionItems.forEach(item => item.style.display = 'none');
-
-        // Show accordion items based on current time
-        if (hour >= morningStart && hour < morningEnd) {
-            document.getElementById('headingMorning').style.display = 'block';
-        }
-        if (hour >= afternoonStart && hour < afternoonEnd) {
-            document.getElementById('headingAfternoon').style.display = 'block';
-        }
-        if (hour >= eveningStart && hour < eveningEnd) {
-            document.getElementById('headingEvening').style.display = 'block';
-        }
-
-        // Always display past time headings
-        if (hour >= morningEnd) {
-            document.getElementById('headingMorning').style.display = 'block';
-        }
-        if (hour >= afternoonEnd) {
-            document.getElementById('headingAfternoon').style.display = 'block';
-        }
-        if (hour >= eveningEnd) {
-            document.getElementById('headingEvening').style.display = 'block';
-        }
-    });
-</script> -->
-
+<!--- javascript mengatur waktu ---->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const now = new Date();
         const hour = now.getHours();
-
         // Define time ranges
         const morningStart = parseInt("{{$waktu[0]->jam_mulai}}", 10);
         const morningEnd = parseInt("{{$waktu[0]->jam_selesai}}", 10);
@@ -456,27 +337,22 @@
         const input_pagi = document.getElementById('input_pagi');
         const input_siang = document.getElementById('input_siang');
         const input_sore = document.getElementById('input_sore');
-
-
         // Set input values based on time
         if (hour >= morningStart && hour < morningEnd) {
             input_pagi.value = "{{$waktu[0]->title}}";
         } else {
             input_pagi.value = '';
         }
-
         if (hour >= afternoonStart && hour < afternoonEnd) {
             input_siang.value = "{{$waktu[1]->title}}";
         } else {
             input_siang.value = '';
         }
-
         if (hour >= eveningStart && hour < eveningEnd) {
             input_sore.value = "{{$waktu[2]->title}}";
         } else {
             input_sore.value = '';
         }
-
         if (hour >= morningEnd) {
             input_pagi.value = "{{$waktu[0]->title}}";
         }
@@ -486,14 +362,12 @@
         if (hour >= eveningEnd) {
             input_sore.value = "{{$waktu[2]->title}}";
         }
-
         console.log("Pagi Value After:", input_pagi.value);
         console.log("Siang Value After:", input_siang.value);
         console.log("Sore Value After:", input_sore.value);
         // Hide all accordion items initially
         const accordionItems = document.querySelectorAll('.accordion-item');
         accordionItems.forEach(item => item.style.display = 'none');
-
         // Show accordion items based on current time
         if (hour >= morningStart && hour < morningEnd) {
             document.getElementById('headingMorning').style.display = 'block';
@@ -517,4 +391,5 @@
         }
     });
 </script>
+<!--- end javascript waktu --->
 @endsection

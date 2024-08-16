@@ -27,19 +27,36 @@ class CeritaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($date)
     {
-        $kategori = Kategori::get();
+        // Validasi format tanggal
+
+
+        // Validasi format tanggal
+        try {
+            $parsedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $date)->format('d-m-Y');
+        } catch (\Exception $e) {
+            // Handle error, misalnya redirect atau menampilkan pesan error
+            return redirect()->route('home')->withErrors('Tanggal tidak valid.');
+        }
+
+        $existingStory = Cerita::whereDate('created_at', '=', \Carbon\Carbon::createFromFormat('d-m-Y', $date)->toDateString())->first();
+        if ($existingStory) {
+            // Redirect ke halaman detail atau edit cerita yang ada
+            return redirect()->route('cerita.show_data', ['cerita' => $existingStory->id, 'date' => $date])->with('message', 'Cerita sudah ada untuk tanggal ini.');
+        }
+
+        // Ambil data kategori dan waktu
+        $kategori = Kategori::all();
         $waktu1 = Waktu::where('title', 'Pagi')->first();
         $waktu2 = Waktu::where('title', 'Siang')->first();
         $waktu3 = Waktu::where('title', 'Sore')->first();
-
-        // Simpan data dalam array atau koleksi
         $waktu = [$waktu1, $waktu2, $waktu3];
-        return view('cerita.add', compact('kategori', 'waktu'));
-    }
 
-    public function handleDate($date)
+        // Kirim data ke view
+        return view('cerita.add', compact('kategori', 'waktu', 'parsedDate'));
+    }
+    public function handleDate($date = null)
     {
 
         $date = Carbon::parse($date);
@@ -50,7 +67,7 @@ class CeritaController extends Controller
             ->first();
 
         if ($cerita) {
-            return redirect()->route('cerita.show_data', ['cerita' => $cerita->id]);
+            return redirect()->route('cerita.show_data', ['cerita' => $cerita->id, 'date' => $date]);
         }
         if ($date->lt($today)) {
             return redirect()->route('cerita.date_expired');
@@ -60,13 +77,18 @@ class CeritaController extends Controller
             return redirect()->route('cerita.date_belum');
         }
 
-        return redirect()->route('cerita.create_view');
+        $formattedDate = $date->format('d-m-Y');
+
+        return redirect()->route('cerita.create_view', ['date' => $formattedDate]);
     }
 
-    public function create_view()
+    public function create_view($date)
     {
 
-        return view('cerita.create_cerita');
+
+        $parsedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $date)->format('d-m-Y');
+
+        return view('cerita.create_cerita', compact('parsedDate'));
     }
 
     public function show_data_expired_date()
@@ -81,13 +103,16 @@ class CeritaController extends Controller
         return redirect()->route('cerita.index');
     }
 
-    public function show_data(Cerita $cerita)
+    public function show_data()
     {
         $user_id = auth()->id(); // Ambil user ID
         $waktuIds = Waktu::pluck('id')->toArray(); // Ambil semua ID waktu (pagi, siang, sore)
 
+        $currentDate = Carbon::today(); // Tanggal hari ini
+
         $ceritas = Cerita::with('kategoris', 'waktuCeritas')
             ->where('user_id', $user_id)
+            ->whereDate('created_at', $currentDate) // Filter berdasarkan tanggal
             ->get();
 
         $data = [
@@ -102,8 +127,9 @@ class CeritaController extends Controller
             }),
         ];
 
-        return view('cerita.exists', compact('data'));
-       
+        $formattedDate = $currentDate->format('d-m-Y'); // Format tanggal
+
+        return view('cerita.exists', compact('data', 'formattedDate', 'currentDate'));
     }
 
     /**
@@ -272,40 +298,66 @@ class CeritaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id, $time)
     {
-        // $kategori = Kategori::get();
-        // $waktu1 = Waktu::where('title', 'Pagi')->first();
-        // $waktu2 = Waktu::where('title', 'Siang')->first();
-        // $waktu3 = Waktu::where('title', 'Sore')->first();
 
-        // // Simpan data dalam array atau koleksi
-        // $waktu = [$waktu1, $waktu2, $waktu3];
-        $user_id = auth()->id(); // Ambil user ID
-        $waktuIds = Waktu::pluck('id')->toArray(); // Ambil semua ID waktu (pagi, siang, sore)
+        // $user_id = auth()->id(); // Ambil user ID
+        // $waktuIds = Waktu::pluck('id')->toArray(); // Ambil semua ID waktu (pagi, siang, sore)
 
-        $ceritas = Cerita::with('kategoris', 'waktuCeritas')
-            ->where('user_id', $user_id)
-            ->get();
+        // $currentDate = Carbon::today(); // Tanggal hari ini
 
-        $data = [
-            'pagi' => $ceritas->filter(function ($cerita) use ($waktuIds) {
-                return $cerita->waktuCeritas->contains('id', $waktuIds[0]); // ID pagi
-            }),
-            'siang' => $ceritas->filter(function ($cerita) use ($waktuIds) {
-                return $cerita->waktuCeritas->contains('id', $waktuIds[1]); // ID siang
-            }),
-            'sore' => $ceritas->filter(function ($cerita) use ($waktuIds) {
-                return $cerita->waktuCeritas->contains('id', $waktuIds[2]); // ID sore
-            }),
-        ];
+        // $ceritas = Cerita::with('kategoris', 'waktuCeritas')
+        //     ->where('user_id', $user_id)
+        //     ->whereDate('created_at', $currentDate) // Filter berdasarkan tanggal
+        //     ->get();
 
-        return view('cerita.edit', compact('data'));
-     
+        // $kategori = Kategori::all(); // Ambil semua kategori dari database
+
+        // $data = [
+        //     'pagi' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+        //         return $cerita->waktuCeritas->contains('id', $waktuIds[0]); // ID pagi
+        //     }),
+        //     'siang' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+        //         return $cerita->waktuCeritas->contains('id', $waktuIds[1]); // ID siang
+        //     }),
+        //     'sore' => $ceritas->filter(function ($cerita) use ($waktuIds) {
+        //         return $cerita->waktuCeritas->contains('id', $waktuIds[2]); // ID sore
+        //     }),
+        // ];
+
+        // // Jika $time tidak ada atau kosong, cari waktu yang kosong
+        // // if (!$time) {
+        // //     foreach (['pagi', 'siang', 'sore'] as $key) {
+        // //         if ($data[$key]->isEmpty()) {
+        // //             $time = $key;
+        // //             break;
+        // //         }
+        // //     }
+        // // }
+        // // Jika $time tidak ada atau kosong, cari waktu yang kosong
+        // if (!$time) {
+        //     $time = array_filter(array_keys($data), fn($key) => $data[$key]->isEmpty());
+        //     $time = $time ? reset($time) : null; // Ambil waktu yang pertama kali kosong jika ada
+        // }
+
+
+        // return view('cerita.edit', compact('data', 'kategori', 'time'));
+
         // return view('cerita.edit', compact('kategori', 'waktu'));
+
+        $cerita = $id > 0 ? Cerita::find($id) : new Cerita();
+        $kategori = $cerita ? $cerita->getNamaKategoriByWaktu($time) : null;
+        $textCerita = $cerita ? $cerita->getNamaTextCeritaByWaktu($time) : '';
+        $keterangan = $cerita ? $cerita->getNamaKeteranganByWaktu($time) : '';
+        $gambar = $cerita ? $cerita->getGambarByWaktu($time) : '';
+    
+        // Ambil semua kategori untuk select option
+        $kategoriList = Kategori::all();
+    
+        return view('cerita.edit', compact('cerita', 'kategori', 'keterangan','textCerita', 'gambar', 'time', 'kategoriList'));
     }
 
- 
+
 
     /**
      * Update the specified resource in storage.

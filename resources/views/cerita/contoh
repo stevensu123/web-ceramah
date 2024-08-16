@@ -28,38 +28,163 @@
 
 
 
-$user_id = auth()->id();
+ $user_id = auth()->id();
 
-// Ambil ID waktu
-$waktuIds = Waktu::pluck('id')->toArray();
+ // Ambil ID waktu
+ $waktuIds = Waktu::pluck('id')->toArray();
 
-// Pastikan $waktuIds memiliki ID yang benar untuk pagi, siang, sore
-$pagiId = $waktuIds[0]; // ID pagi
-$siangId = $waktuIds[1]; // ID siang
-$soreId = $waktuIds[2]; // ID sore
+ // Pastikan $waktuIds memiliki ID yang benar untuk pagi, siang, sore
+ $pagiId = $waktuIds[0]; // ID pagi
+ $siangId = $waktuIds[1]; // ID siang
+ $soreId = $waktuIds[2]; // ID sore
 
-// Ambil satu data cerita untuk setiap waktu
-$cerita_pagi = Cerita::with('kategoris', 'waktuCeritas')
-    ->where('user_id', $user_id)
-    ->whereHas('waktuCeritas', function ($query) use ($pagiId) {
-        $query->where('waktu_cerita.id', $pagiId); // Tambahkan alias tabel
-    })
-    ->first(); // Ambil satu cerita untuk pagi
+ // Ambil satu data cerita untuk setiap waktu
+ $cerita_pagi = Cerita::with('kategoris', 'waktuCeritas')
+ ->where('user_id', $user_id)
+ ->whereHas('waktuCeritas', function ($query) use ($pagiId) {
+ $query->where('waktu_cerita.id', $pagiId); // Tambahkan alias tabel
+ })
+ ->first(); // Ambil satu cerita untuk pagi
 
-$cerita_siang = Cerita::with('kategoris', 'waktuCeritas')
-    ->where('user_id', $user_id)
-    ->whereHas('waktuCeritas', function ($query) use ($siangId) {
-        $query->where('waktu_cerita.id', $siangId); // Tambahkan alias tabel
-    })
-    ->first(); // Ambil satu cerita untuk siang
+ $cerita_siang = Cerita::with('kategoris', 'waktuCeritas')
+ ->where('user_id', $user_id)
+ ->whereHas('waktuCeritas', function ($query) use ($siangId) {
+ $query->where('waktu_cerita.id', $siangId); // Tambahkan alias tabel
+ })
+ ->first(); // Ambil satu cerita untuk siang
 
-$cerita_sore = Cerita::with('kategoris', 'waktuCeritas')
-    ->where('user_id', $user_id)
-    ->whereHas('waktuCeritas', function ($query) use ($soreId) {
-        $query->where('waktu_cerita.id', $soreId); // Tambahkan alias tabel
-    })
-    ->first(); // Ambil satu cerita untuk sore
+ $cerita_sore = Cerita::with('kategoris', 'waktuCeritas')
+ ->where('user_id', $user_id)
+ ->whereHas('waktuCeritas', function ($query) use ($soreId) {
+ $query->where('waktu_cerita.id', $soreId); // Tambahkan alias tabel
+ })
+ ->first(); // Ambil satu cerita untuk sore
 
 
-// Kirim data ke view
-return view('cerita.exists', compact('cerita_pagi', 'cerita_siang', 'cerita_sore'));
+ // Kirim data ke view
+ return view('cerita.exists', compact('cerita_pagi', 'cerita_siang', 'cerita_sore'));
+
+ <!-- <script>
+    var currentTime = new Date();
+    var currentHour = currentTime.getHours();
+
+    // Atur batasan waktu untuk setiap accordion-item
+    var morningStart = 8; // Pagi dimulai dari pukul 08:00
+    var morningEnd = 11; // Pagi berakhir pada pukul 11:59
+    var afternoonStart = 12; // Siang dimulai dari pukul 12:00
+    var afternoonEnd = 17; // Siang berakhir pada pukul 17:59
+    var eveningStart = 18; // Sore dimulai dari pukul 18:00
+    var eveningEnd = 23; // Sore berakhir pada pukul 23:59
+
+    // Ambil elemen-elemen accordion-item
+    var morningAccordion = document.getElementById('headingMorning');
+    var afternoonAccordion = document.getElementById('headingAfternoon');
+    var eveningAccordion = document.getElementById('headingEvening');
+
+    // Fungsi untuk menampilkan alert jika diakses di luar waktu yang ditentukan
+    function showAlert() {
+        alert("Maaf, Anda tidak bisa mengakses ini saat ini. Harap coba lagi pada waktu yang sesuai.");
+    }
+
+    // Fungsi untuk mengatur ketersediaan accordion-item berdasarkan waktu
+    function setAccordionAvailability() {
+        // Pagi
+        if (currentHour >= morningStart && currentHour <= morningEnd) {
+            morningAccordion.classList.remove('disabled');
+            morningAccordion.addEventListener('click', function() {
+                alert("Anda menutup accordion-item Pagi.");
+                // Logic untuk membuka accordion-item pagi
+
+            });
+        } else {
+            morningAccordion.classList.add('disabled');
+            morningAccordion.removeEventListener('click', function() {
+                // Logic untuk membuka accordion-item pagi
+                alert("Anda membuka accordion-item Pagi.");
+
+            });
+            morningAccordion.addEventListener('click', showAlert);
+        }
+
+        // Siang
+        if (currentHour >= afternoonStart && currentHour <= afternoonEnd) {
+            afternoonAccordion.classList.remove('disabled');
+            afternoonAccordion.addEventListener('click', function() {
+                alert("Anda membuka accordion-item Siang.");
+                // Logic untuk membuka accordion-item siang
+            });
+        } else {
+            afternoonAccordion.classList.add('disabled');
+            afternoonAccordion.removeEventListener('click', function() {
+                alert("Anda menutup accordion-item Siang.");
+            });
+            afternoonAccordion.addEventListener('click', showAlert);
+        }
+
+        // Sore
+        if (currentHour >= eveningStart && currentHour <= eveningEnd) {
+            eveningAccordion.classList.remove('disabled');
+            eveningAccordion.addEventListener('click', function() {
+                alert("Anda membuka accordion-item Sore.");
+                // Logic untuk membuka accordion-item sore
+            });
+        } else {
+            eveningAccordion.classList.add('disabled');
+            eveningAccordion.removeEventListener('click', function() {
+                // Logic untuk membuka accordion-item sore
+            });
+            eveningAccordion.addEventListener('click', showAlert);
+        }
+    }
+
+    // Panggil fungsi untuk pertama kali saat halaman dimuat
+    setAccordionAvailability();
+</script> -->
+ <!-- <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const now = new Date();
+        const hour = now.getHours();
+
+        // Define time ranges
+        const morningStart = parseInt("{{$waktu[0]->jam_mulai}}", 10);
+        const morningEnd = parseInt("{{$waktu[0]->jam_selesai}}", 10);
+        const afternoonStart = parseInt("{{$waktu[1]->jam_mulai}}", 10);
+        const afternoonEnd = parseInt("{{$waktu[1]->jam_selesai}}", 10);
+        const eveningStart = parseInt("{{$waktu[2]->jam_mulai}}", 10);
+        const eveningEnd = parseInt("{{$waktu[2]->jam_selesai}}", 10);
+
+        // Hide all accordion items initially
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        accordionItems.forEach(item => item.style.display = 'none');
+
+        // Show accordion items based on current time
+        if (hour >= morningStart && hour < morningEnd) {
+            document.getElementById('headingMorning').style.display = 'block';
+        }
+        if (hour >= afternoonStart && hour < afternoonEnd) {
+            document.getElementById('headingAfternoon').style.display = 'block';
+        }
+        if (hour >= eveningStart && hour < eveningEnd) {
+            document.getElementById('headingEvening').style.display = 'block';
+        }
+
+        // Always display past time headings
+        if (hour >= morningEnd) {
+            document.getElementById('headingMorning').style.display = 'block';
+        }
+        if (hour >= afternoonEnd) {
+            document.getElementById('headingAfternoon').style.display = 'block';
+        }
+        if (hour >= eveningEnd) {
+            document.getElementById('headingEvening').style.display = 'block';
+        }
+    });
+</script> -->
+
+
+
+ @foreach ($kategori as $kt)
+ <option value="{{ $kt->nama_kategori }}" {{ $cerita->getNamaKategoriByWaktu($key) == $kt->nama_kategori ? 'selected' : '' }}>
+     {{ $kt->nama_kategori }}
+ </option>
+ @endforeach

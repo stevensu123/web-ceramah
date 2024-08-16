@@ -76,6 +76,29 @@ class Cerita extends Model
         return $this->{$fields[$waktuKey]} ?? 'Kategori Tidak Ditemukan';
     }
 
+    public function getNamaKeteranganByWaktu($waktuKey)
+    {
+        $fields = [
+            'pagi' => 'keterangan_pagi',
+            'siang' => 'keterangan_siang',
+            'sore' => 'keterangan_sore'
+        ];
+
+        return $this->{$fields[$waktuKey]} ?? 'Kategori Tidak Ditemukan';
+    }
+
+    public function getNamaTextCeritaByWaktu($waktuKey)
+    {
+        $fields = [
+            'pagi' => 'text_cerita_pagi',
+            'siang' => 'text_cerita_siang',
+            'sore' => 'text_cerita_sore'
+        ];
+
+        return $this->{$fields[$waktuKey]} ?? 'Kategori Tidak Ditemukan';
+    }
+
+
 
     // //mengambil waktucerita
     // public function waktuCeritas()

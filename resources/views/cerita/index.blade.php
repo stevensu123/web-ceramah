@@ -29,7 +29,9 @@
             //     start: new Date().toISOString().split('T')[0] // Mengatur tanggal mulai valid ke tanggal hari ini
             // },
             dateClick: function(info) {
-                window.location.href = '/cerita/date/' + info.dateStr;
+             
+                var formattedDate = new Date(info.dateStr).toISOString().split('T')[0];
+                window.location.href = '/cerita/date/' + formattedDate;
             }
         });
         calendar.render();

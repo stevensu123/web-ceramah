@@ -11,7 +11,12 @@
         </div>
         <div class="col">
             <div class="d-flex container-tmbh-data">
-                <a class="btn btn-primary" href="{{route('cerita.create')}}" role="button">Tambah Kategori</a>
+                @if(isset($parsedDate))
+                <a class="btn btn-primary" href="{{ route('cerita.create', ['date' => $parsedDate]) }}" role="button">Tambah Kategori</a>
+                @else
+                <!-- Tampilkan pesan error atau link alternatif jika variabel tidak ada -->
+                <p>Tanggal tidak tersedia.</p>
+                @endif
             </div>
         </div>
     </div>
