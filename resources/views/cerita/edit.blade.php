@@ -45,7 +45,7 @@
                                            
 
                                         </div>
-                                        <div id="file-input-container" style="display: block;">
+                                        <div id="file-input-container" style="display: none;">
                                             <label for="image">Upload gambar:</label>
                                             <input type="file" name="file1" id="file1">
                                             @error('file1')
@@ -57,7 +57,7 @@
 
                                 <!-- edit form column -->
                                 <div class="col-md-9 personal-info">
-                                    <h3>Personal info</h3>
+                                    <h3>Edit Cerita info</h3>
 
                                     <form class="form-horizontal" role="form">
                                         <div class="form-group">
@@ -91,7 +91,7 @@
                                         <label class="form-label" for="basic-default-message">Keterangan</label>
                                             <div class="col-md-8">
                                                 <h6 style="color: blue; font-size: 10px;" for="">Deskripsi dari Emotikon yang dipilih</h6>
-                                                <textarea id="selected-text1" name="keterangan_pagi"  class="form-control">{{ $textCerita }}</textarea>
+                                                <textarea id="selected-text1" name="keterangan_pagi"  class="form-control"~>{{ $textCerita }}</textarea>
                                             </div>
                                         </div>
 

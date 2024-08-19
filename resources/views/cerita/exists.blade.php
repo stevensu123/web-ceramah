@@ -63,7 +63,7 @@
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">Ceritamu:</label>
                                     <div class="col-md-8">
-                                    <a href="{{ route('cerita.edit', [$cerita->id, $key]) }}" class="btn btn-primary">Tambah Data Cerita</a>
+                                    <a href="{{ route('cerita.edit', [$cerita->id, $key]) }}" class="btn btn-primary">Edit Cerita</a>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                         @if ($ceritaDate->isToday())
                         <!-- Jika tanggal cerita adalah hari ini -->
                         <p>Belum ada cerita untuk waktu {{ $label }}.
-                        <a href="{{ route('cerita.edit', ['id' => 0, 'time' => $key]) }}" class="btn btn-primary">Tambah Data Cerita</a>
+                        <a href="{{ route('cerita.edit', ['id' => 0, 'time' => $key]) }}" class="btn btn-primary">Tambah Cerita</a>
                         </p>
                         @else
                         <!-- Jika tanggal cerita sudah lewat -->
