@@ -25,6 +25,7 @@ class Cerita extends Model
         "keterangan_sore",
         "waktu_sore",
         "status",
+        "tanggal",
         "user_id",
     ];
 
@@ -41,6 +42,13 @@ class Cerita extends Model
     public function waktuCeritas()
     {
         return $this->belongsToMany(Waktu::class, 'waktu_cerita');
+    }
+
+    public function waktuCeritass()
+    {
+        return $this->belongsToMany(Waktu::class, 'waktu_cerita')
+                    ->withPivot('id') // Jika Anda memiliki kolom tambahan di pivot table, tambahkan di sini
+                    ->withTimestamps();
     }
 
     public function getKeteranganByWaktu($waktuKey)

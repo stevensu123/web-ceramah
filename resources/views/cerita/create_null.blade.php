@@ -42,13 +42,9 @@
                                         @for ($i = 1; $i <= 3; $i++)
                                             @if (($time==='pagi' && $i===1) || ($time==='siang' && $i===2) || ($time==='sore' && $i===3))
                                             <div id="image-container{{ $i }}" class="mt-3">
-                                            @php
-                                            $gambarField = 'gambar_' . $time;
-                                            $path = $gambar ? Storage::url('upload/cerita/' . $time . '/' . $cerita->$gambarField) : '';
-                                            @endphp
-                                            @if ($path)
-                                            <img id="img{{ $i }}" class="select-img" src="{{ url($path) }}" alt="selected">
-                                            @endif
+                                           
+                                            <img id="img{{ $i }}" class="select-img" src="" alt="selected">
+                                          
                                     </div>
                                     <div id="file-input-container{{ $i }}" style="display: block;">
                                         <label for="image{{ $i }}">Upload gambar {{ $i }}:</label>
@@ -72,7 +68,7 @@
                                     <div class="col-md-8">
                                         @for ($i = 1; $i <= 3; $i++)
                                             @if (($time==='pagi' && $i===1) || ($time==='siang' && $i===2) || ($time==='sore' && $i===3))
-                                            <input class="form-control" type="text" name="nama_kategori_{{ $time }}" id="selected-text-name{{ $i }}" value="{{ $cerita->{'nama_kategori_'.$time} }}">
+                                            <input class="form-control" type="text" name="nama_kategori_{{ $time }}" id="selected-text-name{{ $i }}">
                                             @endif
                                         @endfor
                                     </div>
@@ -103,7 +99,7 @@
                                         <h6 style="color: blue; font-size: 10px;">Deskripsi dari Emotikon yang dipilih</h6>
                                         @for ($i = 1; $i <= 3; $i++)
                                             @if (($time==='pagi' && $i===1) || ($time==='siang' && $i===2) || ($time==='sore' && $i===3))
-                                            <textarea id="selected-text{{ $i }}" name="keterangan_{{ $time }}" class="form-control" readonly>{{ $keterangan }}</textarea>
+                                            <textarea id="selected-text{{ $i }}" name="keterangan_{{ $time }}" class="form-control" readonly></textarea>
                                             @endif
                                             @endfor
                                     </div>
@@ -113,7 +109,7 @@
                                     <div class="col-md-8">
                                         <h6 style="color: blue; font-size: 10px;">Ayo Curahkan Isi Hati Kamu Disini:</h6>
                                         <textarea id="selected-text{{ $i }}" name="text_cerita_{{ $time }}" class="form-control">
-                                        {{$textCerita}}
+                                   
                                         </textarea>
                                     </div>
                                 </div>

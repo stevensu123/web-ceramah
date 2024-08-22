@@ -5,95 +5,119 @@
     <div class="row">
         <div class="col">
             <div class="card-header">
-                <h2 class="tmbh-data-title">Ceritamu </h2>
+                <h2 class="tmbh-data-title">Ceritamu</h2>
             </div>
+            <div id="accordionPopoutIcon" class="accordion accordion-popout">
+                @foreach(['pagi' => 'Waktu Pagi', 'siang' => 'Waktu Siang', 'sore' => 'Waktu Sore'] as $key => $label)
+                @php
+                // Ambil emosi berdasarkan data
+                $emosi = $data[$key]['nama_kategori_' . $key] ?? '';
 
-        </div>
-        <div class="col">
-        </div>
+                // Tentukan kelas badge berdasarkan emosi
+                $badgeClass = '';
 
-        <div class="accordion" id="accordionExample">
-            @foreach(['pagi' => 'Waktu Pagi', 'siang' => 'Waktu Siang', 'sore' => 'Waktu Sore'] as $key => $label)
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading{{ ucfirst($key) }}">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ ucfirst($key) }}" aria-expanded="true" aria-controls="collapse{{ ucfirst($key) }}">
-                        {{ $label }}
-                    </button>
-                </h2>
-                <div id="collapse{{ ucfirst($key) }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="heading{{ ucfirst($key) }}" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        @forelse($data[$key] as $cerita)
-                        <div class="row">
-                            <!-- left column -->
-                            <div class="col-md-3">
-                                <div class="img-container">
-                                    @php $path = Storage::url('upload/cerita/' . $key . '/' . ($key === 'pagi' ? $cerita->gambar_pagi : ($key === 'siang' ? $cerita->gambar_siang : $cerita->gambar_sore))); @endphp
-                                    <img class="img-exists" src="{{url($path)}}" class="avatar img-circle" alt="avatar">
-                                </div>
-                            </div>
-                            <!-- edit form column -->
-                            <div class="col-md-9 personal-info">
-                                <h3>Personal info</h3>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Expresimu Hari ini:</label>
-                                    <div class="col-md-8">
+                $messageColor = '';
+                $messageText = '';
+
+                if ($emosi == 'Marah') {
+                $badgeClass = 'text-danger'; // Merah
+                $messageColor = 'red';
+                $messageText = 'Wah Hari ini Kamu Lagi Penuh Dengan Amarah, Ayo Redam Amarahmu Agar Hari mu Penuh Dengan Kebahagiaan';
+                } elseif ($emosi == 'Sedih') {
+                $badgeClass = 'text-success'; // Hijau
+                $messageColor = 'green';
+                $messageText = 'Wah Hari ini kenapa kamu bersedih, apakah ada yang mengakitimu atau membicarakan kamu yang jelek2, gpp anggap itu sebagai angin berlalu. ayo tersenyum dan berbahagialah';
+                } elseif ($emosi == 'Bahagia') {
+                $badgeClass = 'text-info'; // Biru
+                $messageColor = 'blue';
+                $messageText = 'wah kamu hari ini bahagia. bagus lanjutkan bahagiamu dan jangna lupa selalu bersyukur ya';
+                } else {
+                $badgeClass = 'text-secondary'; // Abu-abu jika tidak diketahui
+                }
+                @endphp
+                <div class="accordion-item card {{ $loop->first ? 'active' : '' }}">
+                    <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIcon{{ ucfirst($key) }}">
+                        <button type="button" class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-{{ $key }}" aria-controls="accordionPopoutIcon-{{ $key }}" {{ $loop->first ? 'aria-expanded=true' : '' }}>
+                            <span class="{{ $badgeClass }}">{{ $label }}</span>
+                        </button>
+                    </h2>
+                    <div id="accordionPopoutIcon-{{ $key }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" data-bs-parent="#accordionPopoutIcon">
+                        <div class="accordion-body">
+                            @if(!is_null($data[$key]) && !empty($data[$key]))
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="img-container">
                                         @php
-                                        $emosi = $cerita->getNamaKategoriByWaktu($key);
-                                        $validEmosi = ['Marah', 'Bahagia', 'Sedih'];
-                                        $kelasEmosi = in_array($emosi, $validEmosi) ? 'text-' . $emosi : '';
+                                        $gambar = $data[$key]['gambar_' . $key] ?? '';
+                                        $path = Storage::url('upload/cerita/' . $key . '/' . $gambar);
                                         @endphp
-                                        <h6 class="{{ $kelasEmosi }}">
-                                            {{ htmlspecialchars($cerita->getNamaKategoriByWaktu($key), ENT_QUOTES, 'UTF-8') }}
-                                        </h6>
+                                        <img class="img-exists" src="{{ url($path) }}" alt="gambar">
                                     </div>
                                 </div>
-                                <!-- <div class="form-group">
-                                        <label class="col-lg-3 control-label">Email:</label>
-                                        <div class="col-lg-8">
-                                            <p class="card-text"><small class="text-muted">{{ $cerita->kategoris->pluck('nama_kategori')->join(',') }}</small></p>
-                                            <p class="card-text"><small class="text-muted">{{ $cerita->kategoris->pluck('nama_kategori')->join(',') }}</small></p>
+                                
+                                <div class="col-md-9 personal-info">
+                                    <h3>info Cerita {{$key}}</h3>
+                                    <div class="form-group">
+                                    <h5 style="color: {{ $messageColor }}">{{ $messageText }}</h5>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Expresimu Hari ini:</label>
+                                        <div class="col-md-8">
+                                            @php
+                                            $emosi = $data[$key]['nama_kategori_' . $key] ?? '';
+                                            $kelasEmosi = in_array($emosi, ['Marah', 'Bahagia', 'Sedih']) ? 'text-' . $emosi : '';
+                                            @endphp
+                                            @if($emosi == 'Marah')
+                                            <span class="badge bg-danger">Marah</span>
+                                            @elseif($emosi == 'Sedih')
+                                            <span class="badge bg-success">Sedih</span>
+                                            @elseif($emosi == 'Bahagia')
+                                            <span class="badge bg-info">Bahagia</span>
+                                            @else
+                                            <span class="badge bg-secondary">Tidak Diketahui</span>
+                                            @endif
                                         </div>
-                                    </div> -->
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Ceritamu:</label>
-                                    <div class="col-md-8">
-                                        <textarea id="selected-text" name="text_cerita_pagi" oninput="autoGrow(this)" readonly class="form-control textarea-noscroll">{{$cerita->getNamaTextCeritaByWaktu($key)}}</textarea>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Ceritamu:</label>
-                                    <div class="col-md-8">
-                                    <a href="{{ route('cerita.edit', [$cerita->id, $key]) }}" class="btn btn-primary">Edit Cerita</a>
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Ceritamu:</label>
+                                        <div class="col-md-8">
+                                            <textarea id="selected-text" name="text_cerita_{{ $key }}" oninput="autoGrow(this)" readonly class="form-control textarea-noscroll">{{ $data[$key]['text_cerita_' . $key] ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Action:</label>
+                                        <div class="col-md-8 d-flex align-items-center">
+                                            <!-- Tombol Edit Cerita -->
+                                            <a href="{{ route('cerita.edit', ['id' => $ceritaId, 'time' => $key]) }}" class="btn btn-primary me-2">Edit Cerita</a>
+                                            <!-- Tombol Hidden -->
+                                            <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-{{ $key }}" aria-expanded="true" aria-controls="accordionPopoutIcon-{{ $key }}" id="hideButton">Tutup Cerita {{$key}}</button>
+                                        </div>
+                                    </div>
+                                    </br>
+                                    </br>
+                                </div> 
                             </div>
+                            @else
+                            @if ($currentDate->isToday())
+                            <p>Belum ada cerita untuk waktu {{ $label }}.
+                                @if ($showAddButton)
+                                <a href="{{ route('cerita.edit', ['id' => $ceritaId, 'time' => $key]) }}" class="btn btn-primary">Tambah Cerita</a>
+                                @endif
+                            </p>
+                            @else
+                            <p>Maaf, tanggal sudah lewat. Kamu tidak bisa mengupdate cerita kamu di waktu {{ $label }} hari.</p>
+                            @endif
+                            @endif
                         </div>
-                        @empty
-                        @php
-                        // Mengambil tanggal cerita dari data yang dikirim ke view
-                        $ceritaDate = \Carbon\Carbon::parse($currentDate);
-                        @endphp
-
-                        @if ($ceritaDate->isToday())
-                        <!-- Jika tanggal cerita adalah hari ini -->
-                        <p>Belum ada cerita untuk waktu {{ $label }}.
-                        <a href="{{ route('cerita.edit', ['id' => 0, 'time' => $key]) }}" class="btn btn-primary">Tambah Cerita</a>
-                        </p>
-                        @else
-                        <!-- Jika tanggal cerita sudah lewat -->
-                        <p>Maaf, tanggal sudah lewat. Kamu tidak bisa mengupdate cerita kamu di waktu {{ $label }} hari.</p>
-                        @endif
-                        <!-- <p>Belum ada cerita untuk waktu {{ $label }}. <a href="{{ route('cerita.edit', $cerita->id) }}" class="btn btn-primary">Update Data Cerita</a></p> -->
-                        @endforelse
                     </div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
+            </br>
         </div>
-
-
-
     </div>
 </div>
+<!-- <pre>{{ print_r($data[$key], true) }}</pre> -->
 @endsection
 
 @section('javascript')

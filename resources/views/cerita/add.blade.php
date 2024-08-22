@@ -31,50 +31,67 @@
                             @csrf
                             <div id="accordionPopoutIcon" class="accordion accordion-popout">
 
-                                <div class="accordion-item card active " id="headingMorning">
+                                <div class="accordion-item card active" id="headingMorning">
                                     <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionPopoutIconOne">
                                         <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-1" aria-controls="accordionPopoutIcon-1">
-                                            Ceritamu Di {{ $waktu[0]->title}} Hari ini Jam {{$waktu[0]->jam_mulai}} - {{$waktu[0]->jam_selesai}}
+                                            Ceritamu Di {{ $waktu[0]->title }} Hari ini Jam {{ $waktu[0]->jam_mulai }} - {{ $waktu[0]->jam_selesai }}
                                         </button>
                                     </h2>
 
-                                    <div id="accordionPopoutIcon-1" class="accordion-collapse collapse " data-bs-parent="#accordionPopoutIcon">
+                                    <div id="accordionPopoutIcon-1" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hidden" id="input_pagi" name="waktu_pagi" value="">
+                                            <input type="hidden" id="input_pagi" required name="waktu_pagi" value="" required>
+
                                             <div class="mb-3">
-                                                <label class="form-label" class="form-label">Pilih Kategori</label>
-                                                <select id="select1" name="gambar" onchange="showImageAndText(1)" class="form-select">
+                                                <label class="form-label">Pilih Kategori</label>
+                                                <select id="select1" name="nama_kategori_pagi" onchange="showImageAndText(1)"
+                                                    class="form-select ">
                                                     <option value="">Default select</option>
                                                     @foreach ($kategori as $kt)
-                                                    <option value="{{$kt->nama_kategori}}">{{$kt->nama_kategori}}</option>
+                                                    <option value="{{ $kt->nama_kategori }}">{{ $kt->nama_kategori }}</option>
                                                     @endforeach
                                                 </select>
+                                                @error('nama_kategori_pagi')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
                                             <div id="image-container1" class="mt-3" style="display: none;">
                                                 <!-- Tempat untuk menampilkan gambar -->
                                                 <img id="img1" class="select-img" src="" alt="selected">
-
                                             </div>
-                                            <div id="file-input-container" style="display: block;">
-                                                <label for="image">Upload gambar:</label>
+
+                                            <div id="file-input-container" style="display: none;">
+                                                <label for="file1">Upload gambar:</label>
                                                 <input type="file" name="file1" id="file1">
                                                 @error('file1')
-                                                <div class="alert alert-danger">{{ $message }}</div>
+                                                <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-fullname">Nama Kategori</label>
                                                 <input type="text" name="nama_kategori_pagi" class="form-control" id="selected-text-name1" placeholder="Default" readonly />
+                                                @error('nama_kategori_pagi')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Keterangan</label>
                                                 <h6 style="color: blue; font-size: 10px;" for="">Deskripsi dari Emotikon yang dipilih</h6>
                                                 <textarea id="selected-text1" name="keterangan_pagi" class="form-control" readonly></textarea>
+                                                @error('keterangan_pagi')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Cerita Kamu Hari ini</label>
-                                                <h6 style="color: blue; font-size: 10px;  overflow: hidden;  resize: none;" for="">Tempat Memasukan Curhatan isi Hati Kamu</h6>
+                                                <h6 style="color: blue; font-size: 10px; overflow: hidden; resize: none;" for="">Tempat Memasukan Curhatan isi Hati Kamu</h6>
                                                 <textarea id="selected-text" name="text_cerita_pagi" oninput="autoGrow(this)" class="form-control textarea-noscroll"></textarea>
+                                                @error('text_cerita_pagi')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -88,41 +105,50 @@
                                     </h2>
                                     <div id="accordionPopoutIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionPopoutIcon">
                                         <div class="accordion-body">
-                                            <input type="hiddne" id="input_siang" name="waktu_siang" value="">
+                                            <input type="hidden" id="input_siang" name="waktu_siang" value="" required>
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
-                                                <select id="select2" name="gambar" onchange="showImageAndText(2)" class="form-select">
+                                                <select id="select2" name="nama_kategori_siang" onchange="showImageAndText(2)" class="form-select">
                                                     <option value="">Default select</option>
                                                     @foreach ($kategori as $kt)
                                                     <option value="{{$kt->nama_kategori}}">{{$kt->nama_kategori}}</option>
                                                     @endforeach
                                                 </select>
+                                                @error('nama_kategori_siang')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div id="image-container2" class="mt-3" style="display: none;">
                                                 <!-- Tempat untuk menampilkan gambar -->
                                                 <img id="img2" class="select-img" src="" alt="selected">
 
                                             </div>
-                                            <div id="file-input-container " style="display: block;">
+                                            <div id="file-input-container " style="display: none;">
                                                 <label for="image">Upload gambar:</label>
                                                 <input type="file" name="file2" id="file2">
-                                                @error('file2')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-fullname">Nama Kategori</label>
                                                 <input type="text" name="nama_kategori_siang" class="form-control" id="selected-text-name2" placeholder="Default" readonly />
+                                                @error('nama_kategori_siang')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Keterangan</label>
                                                 <h6 style="color: blue; font-size: 10px;" for="">Deskripsi dari Emotikon yang dipilih</h6>
                                                 <textarea id="selected-text2" name="keterangan_siang" class="form-control" readonly></textarea>
+                                                @error('keterangan_siang')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Cerita Kamu Hari ini</label>
                                                 <h6 style="color: blue; font-size: 10px;  overflow: hidden;  resize: none;" for="">Tempat Memasukan Curhatan isi Hati Kamu</h6>
                                                 <textarea id="selected-text" name="text_cerita_siang" oninput="autoGrow(this)" class="form-control textarea-noscroll"></textarea>
+                                                @error('text_cerita_siang')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -139,12 +165,15 @@
                                             <input type="hiddne" id="input_sore" name="waktu_sore" value="">
                                             <div class="mb-3">
                                                 <label class="form-label" class="form-label">Pilih Kategori</label>
-                                                <select id="select3" name="gambar" onchange="showImageAndText(3)" class="form-select">
+                                                <select id="select3" name="nama_kategori_sore" onchange="showImageAndText(3)" class="form-select">
                                                     <option value="">Default select</option>
                                                     @foreach ($kategori as $kt)
                                                     <option value="{{$kt->nama_kategori}}">{{$kt->nama_kategori}}</option>
                                                     @endforeach
                                                 </select>
+                                                @error('nama_kategori_sore')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div id="image-container3" class="mt-3" style="display: none;">
                                                 <!-- Tempat untuk menampilkan gambar -->
@@ -161,16 +190,25 @@
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-fullname">Nama Kategori</label>
                                                 <input type="text" name="nama_kategori_sore" class="form-control" id="selected-text-name3" placeholder="Default" readonly />
+                                                @error('nama_kategori_sore')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Keterangan</label>
                                                 <h6 style="color: blue; font-size: 10px;" for="">Deskripsi dari Emotikon yang dipilih</h6>
                                                 <textarea id="selected-text3" name="keterangan_sore" class="form-control" readonly></textarea>
+                                                @error('keterangan_sore')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="basic-default-message">Cerita Kamu Hari ini</label>
                                                 <h6 style="color: blue; font-size: 10px;  overflow: hidden;  resize: none;" for="">Tempat Memasukan Curhatan isi Hati Kamu</h6>
                                                 <textarea id="selected-text" name="text_cerita_sore" oninput="autoGrow(this)" class="form-control textarea-noscroll"></textarea>
+                                                @error('text_cerita_sore')
+                                                <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -180,8 +218,8 @@
                             <br>
                             <label class="form-label" for="basic-default-message">Status</label>
                             <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" checked name="status" value="1" id="switch" />
-                            <label class="form-check-label" id="switch-label" for="switch">Active</label>
+                                <input class="form-check-input" type="checkbox" checked name="status" value="1" id="switch" />
+                                <label class="form-check-label" id="switch-label" for="switch">Active</label>
                             </div>
                             <button type="submit" class="btn btn-primary">Tambah Data</button>
                         </form>
@@ -267,6 +305,7 @@
             input_name.style.display = ""; // Sembunyikan area teks
         }
     }
+
     function autoGrow(element) {
         element.style.height = "auto"; /* Reset height */
         element.style.height = (element.scrollHeight) + "px"; /* Set height to scrollHeight */
@@ -301,10 +340,10 @@
 
 <!--- javascript mengatur status active/inactive ---->
 <script>
-      function updateLabel() {
+    function updateLabel() {
         var switchElement = document.getElementById("switch");
         var switchLabel = document.getElementById("switch-label");
-        
+
         // Update value based on checkbox status
         switchElement.value = switchElement.checked ? "1" : "0";
 

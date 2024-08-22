@@ -23,4 +23,11 @@ class Waktu extends Model
         return $this->belongsToMany(Cerita::class, 'waktu_cerita');
     }
 
+    public function ceritas()
+    {
+        return $this->belongsToMany(Cerita::class, 'waktu_cerita')
+                    ->withPivot('id') // Jika Anda memiliki kolom tambahan di pivot table, tambahkan di sini
+                    ->withTimestamps();
+    }
+
 }

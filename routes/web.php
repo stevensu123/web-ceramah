@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/cerita/view/date-expired', [CeritaController::class, 'show_data_expired_date'])->name('cerita.date_expired');
     Route::get('/cerita/view/date-belum-mulai', [CeritaController::class, 'show_data_belum_date'])->name('cerita.date_belum');
     Route::get('/cerita/edit/{id}/{time?}', [CeritaController::class, 'edit'])->name('cerita.edit');
-
+    Route::get('/cerita/create-null/{id}/{time?}', [CeritaController::class, 'create_null_data'])->name('cerita.create_null');
 
 });
 
