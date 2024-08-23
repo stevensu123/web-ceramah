@@ -32,24 +32,35 @@ class CeritaController extends Controller
     public function create($date)
     {
         // Validasi format tanggal
-        // Validasi format tanggal
         try {
-            $parsedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $date)->format('d-m-Y');
+            // Cek apakah tanggal memiliki format yang benar
+            $parsedDate = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
+            $user_id = auth()->id();
+            // Konversi ke format yang diinginkan
+       
+ 
         } catch (\Exception $e) {
-            // Handle error, misalnya redirect atau menampilkan pesan error
-            return redirect()->route('home')->withErrors('Tanggal tidak valid.');
+            // Redirect atau tampilkan pesan error jika format tanggal salah
+            return redirect()->back()->with('error', 'Format tanggal tidak valid. Harap gunakan format dd-mm-yyyy.');
         }
-        $existingStory = Cerita::whereDate('created_at', '=', \Carbon\Carbon::createFromFormat('d-m-Y', $date)->toDateString())->first();
+
+        // Cek apakah ada cerita dengan tanggal yang sama
+        $existingStory = Cerita::where('user_id', $user_id)
+        ->whereDate('tanggal', '=', $parsedDate)
+        ->first();
+
         if ($existingStory) {
-            // Redirect ke halaman detail atau edit cerita yang ada
+            // Redirect ke halaman detail atau edit cerita yang sudah ada
             return redirect()->route('cerita.show_data', ['cerita' => $existingStory->id, 'date' => $date])->with('message', 'Cerita sudah ada untuk tanggal ini.');
         }
+
         // Ambil data kategori dan waktu
         $kategori = Kategori::all();
         $waktu1 = Waktu::where('title', 'Pagi')->first();
         $waktu2 = Waktu::where('title', 'Siang')->first();
         $waktu3 = Waktu::where('title', 'Sore')->first();
         $waktu = [$waktu1, $waktu2, $waktu3];
+
         // Kirim data ke view
         return view('cerita.add', compact('kategori', 'waktu', 'parsedDate'));
     }
@@ -65,14 +76,18 @@ class CeritaController extends Controller
     public function handleDate($date = null)
     {
         $date = Carbon::parse($date);
-        $today = Carbon::today()->format('d-m-Y');
-        $user = Auth::user();
-        $cerita = Cerita::whereDate('created_at', $date)
-            ->where('user_id', $user->id)
+        $today = Carbon::today();
+        $user_id = auth()->id();
+        $cerita = Cerita::where('user_id', $user_id)
+            ->wheredate('tanggal', $today)
             ->first();
+
+
+
 
         if ($cerita) {
             return redirect()->route('cerita.show_data', ['cerita' => $cerita->id, 'date' => $today]);
+            dd($cerita);
         }
         if ($date->lt($today)) {
             return redirect()->route('cerita.date_expired');
@@ -82,7 +97,7 @@ class CeritaController extends Controller
             return redirect()->route('cerita.date_belum');
         }
 
-        $formattedDate = $date->format('d-m-Y');
+        $formattedDate = $date->format('Y-m-d');
 
         return redirect()->route('cerita.create_view', ['date' => $formattedDate]);
     }
@@ -91,8 +106,25 @@ class CeritaController extends Controller
     // function rederect dan tampilan tombol tambah cerita
     public function create_view($date)
     {
-        $parsedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $date)->format('d-m-Y');
-        return view('cerita.create_cerita', compact('parsedDate'));
+
+        $user_id = auth()->id();
+
+        // Format tanggal yang diklik dari parameter URL
+        $parsedDate = \Carbon\Carbon::parse($date)->format('Y-m-d');
+    
+        // Cek apakah ada cerita dengan user_id dan tanggal yang diklik
+        $cerita = Cerita::where('user_id', $user_id)
+                        ->whereDate('created_at', $parsedDate)
+                        ->first();
+           
+
+        if ($cerita) {
+            // Jika ada cerita, tampilkan view yang sudah ada ceritanya
+            return view('cerita.exists', compact('parsedDate', 'cerita'));
+        } else {
+            // Jika tidak ada cerita, tampilkan view untuk menambahkan cerita baru
+            return view('cerita.create_cerita', compact('parsedDate','cerita'));
+        }
     }
     // end function
 
@@ -480,7 +512,7 @@ class CeritaController extends Controller
 
         // Daftar waktu
         $times = ['pagi' => ['06:00', '12:00'], 'siang' => ['12:00', '18:00'], 'sore' => ['18:00', '24:00']];
-        
+
         // Inisialisasi validator dengan aturan dinamis
         $rules = [];
         foreach ($times as $time => $range) {
@@ -490,11 +522,12 @@ class CeritaController extends Controller
             $rules["text_cerita_{$time}"] = 'nullable|string|max:255';
             $rules["waktu_{$time}"] = 'nullable|exists:waktus,title';
         }
-        
+
         $validator = Validator::make($request->all(), $rules);
-        
+
         $validator->after(function ($validator) use ($request, $currentTime, $times) {
             foreach ($times as $time => $range) {
+                // Jika waktu saat ini berada dalam rentang waktu ini, maka lakukan validasi
                 if ($currentTime >= $range[0] && $currentTime < $range[1]) {
                     foreach (['nama_kategori', 'keterangan', 'text_cerita'] as $field) {
                         if (is_null($request->input("{$field}_{$time}")) || $request->input("{$field}_{$time}") === '') {
@@ -503,24 +536,32 @@ class CeritaController extends Controller
                     }
                 }
             }
-        
-            // Validasi pagi dan siang tetap diperiksa meskipun waktu sekarang sore
-            foreach (['pagi', 'siang'] as $time) {
+
+            // Validasi data sebelumnya berdasarkan waktu saat ini
+            if ($currentTime >= $times['siang'][0]) { // Jika waktu sekarang siang atau lebih, validasi data pagi
                 foreach (['nama_kategori', 'keterangan', 'text_cerita'] as $field) {
-                    if (is_null($request->input("{$field}_{$time}")) || $request->input("{$field}_{$time}") === '') {
-                        $validator->errors()->add("{$field}_{$time}", ucfirst($field) . " $time tidak boleh kosong.");
+                    if (is_null($request->input("{$field}_pagi")) || $request->input("{$field}_pagi") === '') {
+                        $validator->errors()->add("{$field}_pagi", ucfirst($field) . " pagi tidak boleh kosong.");
+                    }
+                }
+            }
+
+            if ($currentTime >= $times['sore'][0]) { // Jika waktu sekarang sore, validasi data siang
+                foreach (['nama_kategori', 'keterangan', 'text_cerita'] as $field) {
+                    if (is_null($request->input("{$field}_siang")) || $request->input("{$field}_siang") === '') {
+                        $validator->errors()->add("{$field}_siang", ucfirst($field) . " siang tidak boleh kosong.");
                     }
                 }
             }
         });
-        
+
         if ($validator->fails()) {
-            // dd($validator->errors());
+            dd($validator->errors());
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-        
+
         $validatedData = $validator->validated();
         $data = [
             'user_id' => Auth::id(),

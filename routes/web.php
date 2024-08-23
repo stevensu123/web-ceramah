@@ -4,6 +4,7 @@ use App\Http\Controllers\CeritaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\QuoteController;
 use App\Models\Cerita;
 use App\Models\Kategori;
 
@@ -32,6 +33,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('show.kategori');
     // Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
    
+    Route::post('/generate-quote', [QuoteController::class, 'generateQuote']);
+
+
     Route::resource('/cerita',CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);
     Route::get('/cerita/create/{date}', [CeritaController::class, 'create'])->name('cerita.create');
