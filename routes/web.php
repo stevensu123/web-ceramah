@@ -24,19 +24,20 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::group(['middleware' => 'auth'], function(){
+Route::group(['middleware' => 'auth'], function () {
 
     //dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-    Route::resource('/kategori',KategoriController::class);
+    Route::resource('/kategori', KategoriController::class);
     Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('show.kategori');
     // Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-   
-    Route::post('/generate-quote', [QuoteController::class, 'generateQuote']);
+
+    Route::resource('/quotes', QuoteController::class);
+    Route::get('/quotes/{id}', [QuoteController::class, 'show'])->name('show.quotes');
 
 
-    Route::resource('/cerita',CeritaController::class);
+    Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);
     Route::get('/cerita/create/{date}', [CeritaController::class, 'create'])->name('cerita.create');
     Route::get('/cerita/view/create/{date}', [CeritaController::class, 'create_view'])->name('cerita.create_view');
@@ -45,6 +46,4 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/cerita/view/date-belum-mulai', [CeritaController::class, 'show_data_belum_date'])->name('cerita.date_belum');
     Route::get('/cerita/edit/{id}/{time?}', [CeritaController::class, 'edit'])->name('cerita.edit');
     Route::get('/cerita/create-null/{id}/{time?}', [CeritaController::class, 'create_null_data'])->name('cerita.create_null');
-
 });
-

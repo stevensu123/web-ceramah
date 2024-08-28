@@ -51,6 +51,11 @@ class Cerita extends Model
                     ->withTimestamps();
     }
 
+    public function quotes()
+    {
+        return $this->belongsToMany(Quote::class);
+    }
+
     public function getKeteranganByWaktu($waktuKey)
     {
         $fields = [

@@ -20,4 +20,14 @@ class Kategori extends Model
     {
         return $this->belongsToMany(Cerita::class, 'cerita_kategori');
     }
+
+    public function quotes()
+    {
+        return $this->belongsToMany(Quote::class, 'category_quote');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Kategori::class);
+    }
 }

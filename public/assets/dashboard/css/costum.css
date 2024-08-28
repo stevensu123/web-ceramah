@@ -90,3 +90,57 @@
   color: red;
   font-size: 0.875em;
 }
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed th, 
+.table-fixed td {
+  word-wrap: break-word;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table td {
+  max-width: 300px; /* Sesuaikan nilai ini untuk mengatur lebar kolom */
+}
+
+.quote-container {
+  position: relative;
+  max-height: 60px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+}
+
+.short-quote {
+  display: block;
+  white-space: normal;
+}
+
+.more-text {
+  display: block;
+}
+
+.toggle-more, .toggle-less {
+  display: inline;
+  cursor: pointer;
+  color: #007bff; /* Atur warna sesuai tema */
+}
+
+.toggle-more {
+  display: inline;
+}
+
+.toggle-less {
+  display: none;
+}
+
+.quote-container.expanded {
+  max-height: none;
+}
