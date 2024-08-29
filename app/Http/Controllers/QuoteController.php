@@ -137,6 +137,11 @@ class QuoteController extends Controller
     public function destroy($id)
     {
         $quote = Quote::findOrFail($id);
+
+        // Hapus relasi kategori pada tabel pivot
+        $quote->categories()->detach();
+    
+        // Hapus quote
         $quote->delete();
 
         return response()->json(['success' => 'Data berhasil dihapus.']);
