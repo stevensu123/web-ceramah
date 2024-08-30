@@ -6,8 +6,9 @@ use App\Models\Quote;
 use GuzzleHttp\Client;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use App\Services\QuotableService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Services\LibreTranslateService;
 
 class QuoteController extends Controller
@@ -27,9 +28,22 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        $quotes = Quote::all();
-        return view('quotes.index', compact('quotes'));
+        return view('quotes.index'); 
     }
+
+    public function manual_quots()
+    {
+        $quotes = Quote::where('source', 'manual')->get();
+        return view('quotes.manual_index',compact('quotes')); 
+    }
+
+    // Metode untuk menampilkan halaman auto
+    public function auto_quots()
+    {
+        $quotes = Quote::all();
+        return view('quotes.auto_index',compact('quotes')); 
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,14 +54,49 @@ class QuoteController extends Controller
         return view('quotes.create', compact('categories'));
     }
 
+    public function manual_create()
+    {
+        $categories = Kategori::all();
+        return view('quotes.manual_create', compact('categories'));
+    }
+
+    public function auto_create()
+    {
+        $categories = Kategori::all();
+        return view('quotes.auto_create', compact('categories'));
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      */
 
+     public function store_manual(Request $request)
+     {
+         
+        $request->validate([
+            'quotes' => 'required|string',
+            'author' => 'nullable|string',
+            'category_id' => 'required|exists:kategoris,id',
+            
+        ]);
+
+        $quote = Quote::create([
+            'quote' => $request->quotes,
+            'author' => $request->input('author') ?: Auth::user()->name,
+            'source' => 'manual',
+        ]);
 
 
-    public function store(Request $request)
+        $quote->categories()->attach($request->category_id);
+ 
+         return redirect()->route('quotes.manual')->with('success', 'Quote created and translated successfully!');
+     }
+
+    public function store_auto(Request $request)
     {
+        
         $request->validate([
             'category_id' => 'required|exists:kategoris,id',
             'quote_length' => 'required|in:short,medium,long',
@@ -63,7 +112,8 @@ class QuoteController extends Controller
 
         $quote = Quote::create([
             'quote' => $quoteData['content'],
-            'author' => $quoteData['author']
+            'author' => $quoteData['author'],
+            'source' => 'auto'
         ]);
 
         // Menerjemahkan kutipan ke Bahasa Indonesia menggunakan Lingva Translate
@@ -82,13 +132,13 @@ class QuoteController extends Controller
 
             $quote->update(['translated_quote' => $translatedQuote]);
         } else {
-            return redirect()->route('quotes.index')->with('error', 'Failed to translate the quote.');
+            return redirect()->route('quotes.auto')->with('error', 'Failed to translate the quote.');
         }
 
         // Menghubungkan kutipan dengan kategori
         $quote->categories()->attach($request->category_id);
 
-        return redirect()->route('quotes.index')->with('success', 'Quote created and translated successfully!');
+        return redirect()->route('quotes.auto')->with('success', 'Quote created and translated successfully!');
     }
 
     /**

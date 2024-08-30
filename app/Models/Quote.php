@@ -9,7 +9,7 @@ class Quote extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['quote', 'author', 'translated_quote'];
+    protected $fillable = ['quote', 'author', 'translated_quote','source'];
 
     public function categories()
     {

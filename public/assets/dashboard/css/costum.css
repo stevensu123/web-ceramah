@@ -145,3 +145,7 @@
   max-height: none;
 }
 
+.count-kata {
+  color: blue;
+  margin-top: 1px;
+}

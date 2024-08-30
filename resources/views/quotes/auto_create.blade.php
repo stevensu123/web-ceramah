@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container">
-<form action="{{ route('quotes.store') }}" method="POST">
+<form action="{{ route('quotes.autoStore') }}" method="POST">
         @csrf
         <label for="category">Category:</label>
         <select name="category_id" id="category" required>
@@ -21,7 +21,7 @@
         </select>
         <br><br>
 
-        <button type="submit">Generate Quote</button>
+        <button type="submit" name="auto" value="1">Auto Generate</button>
     </form>
 </div>
 @endsection
