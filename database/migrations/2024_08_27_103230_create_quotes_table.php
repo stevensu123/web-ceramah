@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('author');
             $table->text('translated_quote')->nullable();
             $table->enum('source', ['manual', 'auto']);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }

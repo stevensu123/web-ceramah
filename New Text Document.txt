@@ -1,0 +1,135 @@
+
+    public function store(Request $request)
+    {
+
+        if ($request->has('manual')) {
+            // Logika insert manual
+            $request->validate([
+                'quotes' => 'required|string',
+                'author' => 'nullable|string',
+                'category_id' => 'required|exists:kategoris,id',
+                'quote_length' => 'required|in:short,medium,long',
+            ]);
+
+            $quote = Quote::create([
+                'quote' => $request->quote,
+                'author' => $request->author,
+                'source' => 'manual',
+            ]);
+            $quote->categories()->attach($request->category_id);
+        } else {
+            $request->validate([
+                'category_id' => 'required|exists:kategoris,id',
+                'quote_length' => 'required|in:short,medium,long',
+            ]);
+    
+            // Mengambil kutipan acak dari API Quotable.io
+            $response = Http::get('https://api.quotable.io/random', [
+                'minLength' => $request->quote_length === 'short' ? 0 : ($request->quote_length === 'medium' ? 50 : 100),
+                'maxLength' => $request->quote_length === 'short' ? 50 : ($request->quote_length === 'medium' ? 100 : 200),
+            ]);
+    
+            $quoteData = $response->json();
+    
+            $quote = Quote::create([
+                'quote' => $quoteData['content'],
+                'author' => $quoteData['author'],
+                'source' => 'auto',
+            ]);
+            
+        
+    
+            // Menerjemahkan kutipan ke Bahasa Indonesia menggunakan Lingva Translate
+            $sourceLang = 'en';
+            $targetLang = 'id';
+            $text = urlencode($quoteData['content']); // Menggunakan urlencode untuk memastikan teks dikodekan dengan benar
+    
+            // Menggunakan Http::get untuk panggilan API Lingva Translate
+            $translatedResponse = Http::get("https://lingva.ml/api/v1/{$sourceLang}/{$targetLang}/{$text}");
+    
+            if ($translatedResponse->successful()) {
+                $translatedQuote = $translatedResponse->json('translation');
+    
+                // Menghapus tanda plus (+) yang mungkin ada pada hasil terjemahan
+                $translatedQuote = str_replace('+', ' ', $translatedQuote);
+    
+                $quote->update(['translated_quote' => $translatedQuote]);
+            } else {
+                return redirect()->route('quotes.index')->with('error', 'Failed to translate the quote.');
+            }
+    
+            // Menghubungkan kutipan dengan kategori
+            $quote->categories()->attach($request->category_id);
+    
+            // Logika auto generate
+            $response = Http::get('https://api.quotable.io/random');
+            $data = $response->json();
+
+        }
+
+
+       
+        return redirect()->route('quotes.index')->with('success', 'Quote created and translated successfully!');
+    }
+
+
+
+ public function store(Request $request)
+    {
+        
+        $request->validate([
+            'category_id' => 'required|exists:kategoris,id',
+            'quote_length' => 'required|in:short,medium,long',
+        ]);
+
+        // Mengambil kutipan acak dari API Quotable.io
+        $response = Http::get('https://api.quotable.io/random', [
+            'minLength' => $request->quote_length === 'short' ? 0 : ($request->quote_length === 'medium' ? 50 : 100),
+            'maxLength' => $request->quote_length === 'short' ? 50 : ($request->quote_length === 'medium' ? 100 : 200),
+        ]);
+
+        $quoteData = $response->json();
+
+        $quote = Quote::create([
+            'quote' => $quoteData['content'],
+            'author' => $quoteData['author']
+        ]);
+
+        // Menerjemahkan kutipan ke Bahasa Indonesia menggunakan Lingva Translate
+        $sourceLang = 'en';
+        $targetLang = 'id';
+        $text = urlencode($quoteData['content']); // Menggunakan urlencode untuk memastikan teks dikodekan dengan benar
+
+        // Menggunakan Http::get untuk panggilan API Lingva Translate
+        $translatedResponse = Http::get("https://lingva.ml/api/v1/{$sourceLang}/{$targetLang}/{$text}");
+
+        if ($translatedResponse->successful()) {
+            $translatedQuote = $translatedResponse->json('translation');
+
+            // Menghapus tanda plus (+) yang mungkin ada pada hasil terjemahan
+            $translatedQuote = str_replace('+', ' ', $translatedQuote);
+
+            $quote->update(['translated_quote' => $translatedQuote]);
+        } else {
+            return redirect()->route('quotes.index')->with('error', 'Failed to translate the quote.');
+        }
+
+        // Menghubungkan kutipan dengan kategori
+        $quote->categories()->attach($request->category_id);
+
+        return redirect()->route('quotes.index')->with('success', 'Quote created and translated successfully!');
+    }
+
+   public function manual_create () 
+    {
+        $categories = Kategori::all();
+        $user_id = auth()->id();
+        return view('quotes.manual_create', compact('categories','user_id'));
+    }
+
+    public function auto_create () 
+    {
+        $categories = Kategori::all();
+        return view('quotes.manual_create', compact('categories'));
+    }
+

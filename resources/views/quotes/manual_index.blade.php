@@ -14,68 +14,63 @@
                 </div>
                 <div class="col">
                     <div class="d-flex container-tmbh-data">
-                    <a class="btn btn-warning" href="{{ route('quotes.index') }}" role="button">Back Tampilan Awal</a>
+                        <a class="btn btn-warning" href="{{ route('quotes.index') }}" role="button">Back Tampilan Awal</a>
                         <a class="btn btn-primary" href="{{ route('quotes.manualCreate') }}" role="button">Tambah Kategori</a>
                     </div>
                 </div>
             </div>
             <hr class="" />
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Show Detail</th>
-                                <th>Kutipan</th>
-                                <th>Kategori</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($quotes as $quote)
-                            <tr>
-                                <td>
-                                    <button type="button" class="btn btn-success exploder" data-id="{{ $quote->id }}">
-                                        <span class="bx bx-search"></span>
-                                    </button>
-                                </td>
-                                <td>
-                                    <div class="quote-container">
-                                        <span class="short-quote">{{ Str::limit($quote->quote, 100) }}</span>
-                                        @if (strlen($quote->quote) > 100)
-                                        <span class="more-text" style="display: none;">{{ substr($quote->quote, 100) }}</span>
-                                        <a href="javascript:void(0);" class="toggle-more" onclick="toggleQuote(this)">More</a>
-                                        <a href="javascript:void(0);" class="toggle-less" style="display: none;" onclick="toggleQuote(this)">Less</a>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td>{{ $quote->categories->pluck('nama_kategori')->join(', ') }}</td>
-                                <td>
-                                    <button class="btn btn-info btn-show" data-id="{{ $quote->id }}">Show</button>
-                                    <br>
-                                    <button class="btn btn-danger btn-delete" data-id="{{ $quote->id }}"><i class="bx bx-trash me-1"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr class="explode hide" id="details-{{ $quote->id }}" style="display: none;">
-                                <td colspan="4" style="background: #CCC;">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>Translate Kutipan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>{{ $quote->translated_quote }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="main-container-wrapper">
+                    <div class="table-wrapper">
+                    <table class="table">
+    <thead>
+        <tr>
+            <th>Show Detail</th>
+            <th>Kutipan</th>
+            <th>Kategori</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($quotes as $quote)
+        <tr>
+            <td>
+                <button type="button" class="btn btn-success expandable" data-id="{{ $quote->id }}">
+                    <span class="bx bx-search"></span>
+                </button>
+            </td>
+            <td>{{ $quote->quote }}</td>
+            <td>{{ $quote->categories->pluck('nama_kategori')->join(', ') }}</td>
+            <td>
+                <button class="btn btn-info btn-show" data-id="{{ $quote->id }}">Show</button>
+                <br>
+                <button class="btn btn-danger btn-delete" data-id="{{ $quote->id }}">
+                    <i class="bx bx-trash me-1"></i> Delete
+                </button>
+            </td>
+        </tr>
+        <tr id="expandedRow-{{ $quote->id }}" class="expanded-row" style="display: none;">
+            <td colspan="7">
+                <div class="expanded-row__container">
+                    <div class="expanded-row__card left">
+                        <div class="expanded-row__main-text">Kutipan Translate</div>
+                        <div class="expanded-row__sub-text">{{ $quote->translated_quote }}</div>
+                    </div>
+                    <div class="expanded-row__card left">
+                        <div class="expanded-row__main-text">Author</div>
+                        <div class="expanded-row__sub-text">{{ $quote->author }}</div>
+                    </div>
                 </div>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+                    </div>
+                </div>
+
             </div>
         </div>
         <!--/ Bordered Table -->
@@ -91,8 +86,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="quotes-name"></p>
-                <p id="quotes-translate"></p>
+                <label for="">Quotes :</label>
+                <p id="quotes-name" oninput="updateQuoteLength()" readonly></p>
+                <h6 id="word-count" class=" float-end count-kata">Jumlah Kata: 0</h6>
+                <label for="">Quotes Translate :</label>
+                <p id="quotes-translate" readonly></p>
                 <p id=""> <span class="badge bg-label-success me-1" id="quotes-author"></span> </p>
                 <span class="badge bg-label-primary me-1" id="quotes-kategori"></span>
             </div>
@@ -113,31 +111,19 @@
                 fetch('/quotes/' + id)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('quotes-name').textContent = 'Quotes: ' + (data.quote || 'N/A');
-                        document.getElementById('quotes-translate').textContent = 'Quotes Translate: ' + (data.quotes_translate || 'N/A');
-                        document.getElementById('quotes-kategori').textContent = 'Quotes Kategori: ' + (data.nama_kategori || 'N/A');
-                        document.getElementById('quotes-author').textContent = 'Quotes Author: ' + (data.quotes_author || 'N/A');
+                        document.getElementById('quotes-name').textContent = (data.quote || 'Tidak ada Quots');
+                        document.getElementById('quotes-translate').textContent = (data.quotes_translate || 'Tidak ada Translate');
+                        document.getElementById('quotes-kategori').textContent = 'Quotes Kategori: ' + (data.nama_kategori || 'Tidak ada Kategori');
+                        document.getElementById('quotes-author').textContent = 'Quotes Author: ' + (data.quotes_author || 'Tidak ada Author');
+
+                        updateQuoteLength();
                         var modal = new bootstrap.Modal(document.getElementById('QuotesModal'));
                         modal.show();
                     });
             });
         });
 
-        document.querySelectorAll('.exploder').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var id = this.getAttribute('data-id');
-                this.classList.toggle("btn-success");
-                this.classList.toggle("btn-danger");
-                this.children[0].classList.toggle("bx-search");
-                this.children[0].classList.toggle("bx-zoom-out");
-                var detailsRow = document.getElementById('details-' + id);
-                if (detailsRow.style.display === "none") {
-                    detailsRow.style.display = "";
-                } else {
-                    detailsRow.style.display = "none";
-                }
-            });
-        });
+
 
         document.querySelectorAll('.btn-delete').forEach(function(button) {
             button.addEventListener('click', function(e) {
@@ -183,25 +169,37 @@
             });
         });
     });
+    $(document).ready(function(){
+    $('.expandable').on('click', function(){
+        var quoteId = $(this).data('id');
+        var expandedRow = $('#expandedRow-' + quoteId);
+        expandedRow .toggleClass('expanded-row--open');
+        // Toggle the visibility of the expanded row
+        expandedRow.toggle();
+        
+        // Optional: Add active class to the button if needed
+        $(this).toggleClass('active');
+    });
+});
 
-    function toggleQuote(element) {
-        var container = element.parentNode.parentNode.querySelector('.quote-container');
-        var shortQuote = container.querySelector('.short-quote');
-        var moreText = container.querySelector('.more-text');
-        var moreLink = container.querySelector('.toggle-more');
-        var lessLink = container.querySelector('.toggle-less');
 
-        if (container.classList.contains('expanded')) {
-            container.classList.remove('expanded');
-            moreText.style.display = "none";
-            moreLink.style.display = "inline";
-            lessLink.style.display = "none";
-        } else {
-            container.classList.add('expanded');
-            moreText.style.display = "block";
-            moreLink.style.display = "none";
-            lessLink.style.display = "inline";
-        }
+    function updateQuoteLength() {
+        const paragraph = document.getElementById('quotes-name');
+        const wordCountSpan = document.getElementById('word-count');
+
+        // Mengambil teks dari elemen <p>
+        const words = paragraph.textContent.trim().split(/\s+/).filter(function(n) {
+            return n.length > 0;
+        });
+        const wordCount = words.length;
+        wordCountSpan.textContent = `Jumlah Kata: ${wordCount}`;
+
+        // Mengatur teks opsi berdasarkan jumlah kata
+    }
+
+    function autoGrow(element) {
+        element.style.height = "auto"; /* Reset height */
+        element.style.height = (element.scrollHeight) + "px"; /* Set height to scrollHeight */
     }
 </script>
 
