@@ -35,13 +35,21 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/quotes',  [QuoteController::class, 'index'])->name('quotes.index');
     Route::get('/quotes/{id}', [QuoteController::class, 'show'])->name('show.quotes');
+    Route::delete('/quotes/{id}', [QuoteController::class, 'destroy']);
     Route::get('/quotes/view/manual', [QuoteController::class, 'manual_quots'])->name('quotes.manual');
-    Route::get('/quotes/view/auto', [QuoteController::class, 'auto_quots'])->name('quotes.auto');
     Route::get('/quotes/view/create/manual', [QuoteController::class, 'manual_create'])->name('quotes.manualCreate');
-    Route::get('/quotes/view/create/auto', [QuoteController::class, 'auto_create'])->name('quotes.autoCreate');
     Route::post('/quotes/sotre/manual', [QuoteController::class, 'store_manual'])->name('quotes.manualStore');
-    Route::post('/quotes/sotre/auto', [QuoteController::class, 'store_auto'])->name('quotes.autoStore');
+    Route::get('/quotes/edit/manual/{id}', [QuoteController::class, 'manual_edit'])->name('quotes.manualEdit');
+    Route::post('/quotes/update/manual/{id}', [QuoteController::class, 'manual_update'])->name('quotes.manualUpdate');
 
+    Route::post('/quotes/sotre/auto', [QuoteController::class, 'store_auto'])->name('quotes.autoStore');
+    Route::get('/quotes/view/create/auto', [QuoteController::class, 'auto_create'])->name('quotes.autoCreate');
+    Route::get('/quotes/view/auto', [QuoteController::class, 'auto_quots'])->name('quotes.auto');
+    
+    
+   
+    
+   
     Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);
     Route::get('/cerita/create/{date}', [CeritaController::class, 'create'])->name('cerita.create');

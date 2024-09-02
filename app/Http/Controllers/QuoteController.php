@@ -40,7 +40,7 @@ class QuoteController extends Controller
     // Metode untuk menampilkan halaman auto
     public function auto_quots()
     {
-        $quotes = Quote::all();
+        $quotes = Quote::where('source', 'auto')->get();
         return view('quotes.auto_index',compact('quotes')); 
     }
 
@@ -160,25 +160,43 @@ class QuoteController extends Controller
      */
     public function edit(string $id)
     {
+        $quote = Quote::with('categories')->findOrFail($id); // Memuat relasi kategori
+        $categories = Kategori::all(); // Mengambil semua kategori
+    
+        return view('quotes.edit', compact('quote', 'categories'));
+    }
+
+    public function manual_edit(string $id)
+    {
         $quote = Quote::findOrFail($id);
         $categories = Kategori::all();
-        return view('quotes.edit', compact('quote', 'categories'));
+        return view('quotes.manual_edit', compact('quote', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function manual_update(Request $request, string $id)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'category_id' => 'required|exists:kategoris,id',
-            'length' => 'required|in:short,medium,long'
+            'quotes' => 'required|string',
+            'author' => 'required|string',
         ]);
 
+        // Temukan quote berdasarkan ID
         $quote = Quote::findOrFail($id);
-        $quote->update($request->all());
 
-        return redirect()->route('quotes.index')->with('success', 'Quote berhasil diupdate.');
+        // Update data utama quote
+        $quote->update([
+            'author' => $validatedData['author'],
+            'quote' => $validatedData['quotes'],
+        ]);
+
+        // Update relasi kategori di pivot table
+        $quote->categories()->sync([$validatedData['category_id']]);
+
+        return redirect()->route('quotes.manual')->with('success', 'Quote berhasil diupdate.');
     }
 
     /**

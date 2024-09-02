@@ -91,59 +91,6 @@
   font-size: 0.875em;
 }
 
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.table-fixed th, 
-.table-fixed td {
-  word-wrap: break-word;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-.table td {
-  max-width: 300px; /* Sesuaikan nilai ini untuk mengatur lebar kolom */
-}
-
-.quote-container {
-  position: relative;
-  max-height: 60px; /* Atur sesuai kebutuhan */
-  overflow: hidden;
-}
-
-.short-quote {
-  display: block;
-  white-space: normal;
-}
-
-.more-text {
-  display: block;
-}
-
-.toggle-more, .toggle-less {
-  display: inline;
-  cursor: pointer;
-  color: #007bff; /* Atur warna sesuai tema */
-}
-
-.toggle-more {
-  display: inline;
-}
-
-.toggle-less {
-  display: none;
-}
-
-.quote-container.expanded {
-  max-height: none;
-}
 
 .count-kata {
   color: blue;
@@ -153,6 +100,7 @@
 
 .left {
   float: left !important;
+  margin-right: 20px;
 }
 
 .right {
@@ -216,14 +164,32 @@
   transition: max-height 0.35s ease-in;
 }
 .table tbody tr.expanded-row--open .expanded-row__container {
-  max-height: 53px;
+  max-height: 100%;
   transition: max-height 0.35s ease-in;
-  margin-left: 118px;
+  margin-left: 195px;
 
 }
 
+.expanded-row {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+.expanded-row__container {
+  display: flex;
+  flex-wrap: wrap; /* Membungkus elemen ke baris berikutnya */
+  gap: 16px; /* Jarak antar kartu */
+}
+
+
 .expanded-row__card {
-  padding: 8px 16px;
+  flex: 1 1 200px; /* Fleksibel untuk lebar minimal 200px */
+  box-sizing: border-box;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  overflow: hidden; /* Menyembunyikan konten yang meluap */
+  max-width: calc(100% - 16px); /* Mengurangi padding dari lebar total */
 }
 
 .expanded-row__main-text {
@@ -236,5 +202,17 @@
 .expanded-row__sub-text {
   font-size: 14px;
   margin-top: 4px;
-  text-align: right;
+  text-align: left; /* Ubah sesuai kebutuhan */
+  overflow-wrap: break-word; /* Memastikan kata panjang dipecah */
+  white-space: normal; /* Membiarkan teks membungkus */
+}
+
+.span-author {
+ color: black;
+}
+
+@media (max-width: 768px) {
+  .expanded-row__container {
+    flex-direction: column; /* Mengubah arah fleksibel pada layar kecil */
+  }
 }
