@@ -52,13 +52,22 @@ class LoginController extends Controller
         $password = $request->password;
 
       
-        if (Auth::attempt(['username'=>$username,'password'=>$password])) {
-            
-            return redirect()->route('dashboard.index');
-      
-        } else{
-           
-            return redirect('login');
+        if (Auth::attempt(['username' => $username, 'password' => $password])) {
+            // Dapatkan user yang telah di-authenticate
+            $user = Auth::user();
+    
+            // Periksa apakah status user adalah 'approved'
+            if ($user->status === 'approved') {
+                // Jika disetujui, arahkan ke dashboard
+                return redirect()->route('dashboard.index');
+            } else {
+                // Jika status bukan 'approved', logout dan arahkan kembali ke halaman login dengan pesan error
+                Auth::logout();
+                return redirect('login')->with(['status' => 'Akun Anda belum disetujui oleh admin.']);
+            }
+        } else {
+            // Jika autentikasi gagal, arahkan kembali ke halaman login dengan pesan error
+            return redirect('login')->with(['status' => 'Login gagal, silakan periksa username dan password Anda.']);
         }
     }
 

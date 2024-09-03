@@ -18,6 +18,7 @@ class UserTableSeeder extends Seeder
             'name' => 'steven',
             'no_hp' => '081271648758',
             'username' => 'admin',
+            'status' => 'approved',
             'password' => Hash::make('123456'),
         ]);
     }
