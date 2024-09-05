@@ -2,6 +2,38 @@
 
 return [
 
+   'authorities' => [
+        'manage_kategori' => [
+            'kategori_show',
+            'kategori_create',
+            'kategori_update',
+            'kategori_detail',
+            'kategori_edit',
+            'kategori_delete'
+        ],
+        'manage_quots' => [
+            'quots_show',
+            'quots_create',
+            'quots_update',
+            'quots_detail',
+            'quots_edit',
+            'quots_delete'
+        ],
+        'manage_users' => [
+            'users_show',
+            'users_create',
+            'users_update',
+            'users_detail',
+            'users_delete'
+        ],
+        'manage_cerita' => [
+            'cerita_show',
+            'cerita_create',
+            'cerita_update',
+            'cerita_detail',
+            'cerita_delete'
+        ],
+    ],
     'models' => [
 
         /*

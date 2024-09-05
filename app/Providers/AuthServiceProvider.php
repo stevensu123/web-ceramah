@@ -4,7 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-
+use Illuminate\Support\Facades\Gate;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -21,6 +21,37 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        Gate::define('manage_kategori',function($user) {
+            return $user->hasAnyPermission([
+                'kategori_show',
+                'kategori_create',
+                'kategori_update',
+                'kategori_detail',
+                'kategori_edit',
+                'kategori_delete'
+            ]);
+        });
+
+        Gate::define('manage_users', function($user){
+            return $user->hasAnyPermission([
+                'users_show',
+                'users_create',
+                'users_update',
+                'users_detail',
+                'users_delete'
+            ]);
+        });
+
+        Gate::define('manage_roles', function($user){
+            return $user->hasAnyPermission([
+                'roles_show',
+                'roles_create',
+                'roles_update',
+                'roles_detail',
+                'roles_delete'
+            ]);
+        });
     }
 }

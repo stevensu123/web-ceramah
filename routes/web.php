@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\UsersController;
 use App\Models\Cerita;
 use App\Models\Kategori;
 
@@ -30,7 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::resource('/kategori', KategoriController::class);
-    Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('show.kategori');
+    // Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('show.kategori');
     // Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
     Route::get('/quotes',  [QuoteController::class, 'index'])->name('quotes.index');
@@ -48,7 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     
    
-    
+    Route::resource('/users', UsersController::class);
    
     Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);

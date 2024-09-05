@@ -42,7 +42,7 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
+
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 </head>
 
@@ -89,11 +89,13 @@
                             <div data-i18n="Authentications">Cerita Saya</div>
                         </a>
                         <ul class="menu-sub">
+                        @can('manage_kategori')
                             <li class="menu-item">
                                 <a href="{{route('kategori.index')}}" class="menu-link" target="_blank">
                                     <div data-i18n="Basic">Kategori</div>
                                 </a>
                             </li>
+                            @endcan
                             <li class="menu-item">
                                 <a href="auth-register-basic.html" class="menu-link" target="_blank">
                                     <div data-i18n="Basic">Register</div>
@@ -220,7 +222,7 @@
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                        @yield('content')
+                            @yield('content')
                         </div>
                         <div class="row">
                         </div>
@@ -277,14 +279,14 @@
 
     <!-- Page JS -->
     <script src="{{asset('assets/dashboard/js/dashboards-analytics.js')}}"></script>
-    
+
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 @include('sweetalert::alert')
 @yield('javascript')
