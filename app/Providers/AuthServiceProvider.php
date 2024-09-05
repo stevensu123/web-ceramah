@@ -44,13 +44,13 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
-        Gate::define('manage_roles', function($user){
+        Gate::define('manage_cerita', function($user){
             return $user->hasAnyPermission([
-                'roles_show',
-                'roles_create',
-                'roles_update',
-                'roles_detail',
-                'roles_delete'
+                'cerita_show',
+                'cerita_create',
+                'cerita_update',
+                'cerita_detail',
+                'cerita_delete'
             ]);
         });
     }
