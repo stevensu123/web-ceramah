@@ -50,7 +50,12 @@ class AuthServiceProvider extends ServiceProvider
                 'cerita_create',
                 'cerita_update',
                 'cerita_detail',
-                'cerita_delete'
+                'cerita_delete',
+                'handleDate',
+                'show_data_expired_date',
+                'show_data_belum_date',
+                'create_null_data',
+                'show_data'
             ]);
         });
     }

@@ -225,3 +225,189 @@
 .btn {
   margin: 0; /* Menghilangkan margin default */
 }
+
+.pcard-container {
+  font-family: 'Source Sans Pro', sans-serif;
+  max-width: 1200px; /* Untuk membatasi lebar maksimal pada layar besar */
+  margin: auto;
+  padding: 10px;
+}
+
+.pcard {
+  background-color: white;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.pcard-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pcard-img {
+  flex: 40%;
+}
+
+.pcard-img img {
+  width: 100%;
+  height: auto;
+}
+
+.pcard-content {
+  flex: 60%;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pcard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pcard-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-headline-text {
+  text-transform: uppercase;
+  color: #1e206a;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-caption {
+  color: #398e91;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.pcard-actions {
+  display: flex;
+}
+
+.discount-btn, .fav-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #4caa86;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fav-btn i {
+  color: white;
+}
+
+.pcard-info {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.info-item {
+  flex: 1;
+ 
+}
+
+.pcard-title-txt {
+  font-size: 12px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+
+.pcard-title-caption {
+  font-size: 12px;
+  color: #398e91;
+  font-weight: 600;
+}
+
+.pcard-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.quick-btn, .explore-btn {
+  flex: 1;
+  padding: 10px;
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.quick-btn {
+  background-color: #4caa86;
+  margin-right: 5px;
+}
+
+.explore-btn {
+  background-color: #398e91;
+  margin-left: 5px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .pcard-content {
+    padding-left: 10px;
+  }
+
+  .pcard-img, .pcard-content {
+    flex: 100%;
+  }
+
+  .pcard-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-item {
+    text-align: left;
+    margin-bottom: 10px;
+  }
+
+  .pcard-footer {
+    flex-direction: column;
+  }
+
+  .quick-btn, .explore-btn {
+    flex: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .pcard {
+    padding: 15px;
+  }
+
+  .card-headline-text {
+    font-size: 14px;
+  }
+
+  .card-caption {
+    font-size: 8px;
+  }
+
+  .discount-btn, .fav-btn {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .pcard-title-txt, .pcard-title-caption {
+    font-size: 10px;
+  }
+
+  .quick-btn, .explore-btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+}

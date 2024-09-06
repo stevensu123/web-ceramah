@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\RoleController;
 use App\Models\Cerita;
 use App\Models\Kategori;
 
@@ -47,7 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/quotes/view/create/auto', [QuoteController::class, 'auto_create'])->name('quotes.autoCreate');
     Route::get('/quotes/view/auto', [QuoteController::class, 'auto_quots'])->name('quotes.auto');
     
-    
+    Route::resource('/roles', RoleController::class); 
    
     Route::resource('/users', UsersController::class);
    
