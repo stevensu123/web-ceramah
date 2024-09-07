@@ -155,7 +155,8 @@ $(document).ready(function() {
     // Aktifkan kembali scroll pada body dan kembalikan posisi scroll
     function enableScroll() {
         // Kembalikan posisi scroll
-        $(window).scrollTop(scrollTop);
+        var savedScrollTop = $('body').data('scrollTop');
+        $(window).scrollTop(savedScrollTop);
 
         // Aktifkan kembali scroll pada body
         $('body').css({
@@ -202,16 +203,21 @@ $(document).ready(function() {
         });
     });
 
-    // Event handler untuk menutup modal
-    $('#roleModal').on('hidden.bs.modal', function() {
-        // Tidak perlu memanggil enableScroll di sini jika ingin scroll tetap di posisi saat modal ditutup
+    // Event handler untuk tombol close modal
+    $('.btn-close').click(function() {
+        // Simpan posisi scroll saat ini agar tidak ter-reset ke atas
+        scrollTop = $(window).scrollTop();
+        $('body').data('scrollTop', scrollTop);
+
+        // Modal akan tertutup secara normal, dan posisi tetap
     });
 
-    // Event handler untuk tombol close
-    $('#roleModal').on('hide.bs.modal', function() {
-        enableScroll(); // Aktifkan kembali scroll jika tombol close di klik
+    // Event handler saat modal sepenuhnya tertutup
+    $('#roleModal').on('hidden.bs.modal', function() {
+        enableScroll(); // Aktifkan scroll kembali saat modal sepenuhnya tertutup
     });
 });
+
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
