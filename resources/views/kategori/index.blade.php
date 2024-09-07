@@ -43,10 +43,10 @@
                                 <td>{{$kt->nama_kategori}}</td>
                                 <td><span class="badge bg-label-primary me-1">{{ $kt->status ? 'Aktif' : 'Tidak Aktif' }}</span></td>
                                 <td>
-                                <button class="btn btn-info btn-show" data-id="{{ $kt->id }}">Show</button>
+                                    <button class="btn btn-info btn-show" data-id="{{ $kt->id }}">Show</button>
                                     <br>
-                                <button class="btn btn-danger btn-delete" data-id="{{ $kt->id }}"><i class="bx bx-trash me-1"></i> Delete</button>
-                                    
+                                    <button class="btn btn-danger btn-delete" data-id="{{ $kt->id }}"><i class="bx bx-trash me-1"></i> Delete</button>
+
                                 </td>
                             </tr>
                             @endforeach
@@ -60,25 +60,25 @@
 </div>
 
 <div class="modal fade" id="KategoriModal" tabindex="-1" aria-labelledby="KategoriModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="KategoriModalLabel">Kategori Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="KategoriModalLabel">Kategori Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 <img id="Kategori-image" src="" alt="Product Image" style="width: 250px; height: auto;">
-              
-                    <p id="Kategori-name"></p>
-                    <p id="Kategori-description"></p>
-                    <span class="badge bg-label-primary me-1" id="Kategori-Status"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+
+                <p id="Kategori-name"></p>
+                <p id="Kategori-description"></p>
+                <span class="badge bg-label-primary me-1" id="Kategori-Status"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('javascript')
@@ -98,25 +98,25 @@
 
 </script> -->
 <script>
-        $(document).ready(function() {
-            $('.btn-show').click(function() {
-                var id = $(this).data('id');
-                $.get('/kategori/' + id, function(data) {
-                    $('#Kategori-name').text('Nama Kategori: ' + data.nama_kategori);
-                    $('#Kategori-description').text('Desktripsi: ' + data.keterangan);
-                    $('#Kategori-Status').text('Status: ' + (data.status ? 'Active' : 'Inactive'));
-                    $('#Kategori-image').attr('src', '/storage/upload/emotikon/' + data.gambar);
-                    $('#KategoriModal').modal('show');
-                });
+    $(document).ready(function() {
+        $('.btn-show').click(function() {
+            var id = $(this).data('id');
+            $.get('/kategori/' + id, function(data) {
+                $('#Kategori-name').text('Nama Kategori: ' + data.nama_kategori);
+                $('#Kategori-description').text('Desktripsi: ' + data.keterangan);
+                $('#Kategori-Status').text('Status: ' + (data.status ? 'Active' : 'Inactive'));
+                $('#Kategori-image').attr('src', '/storage/upload/emotikon/' + data.gambar);
+                $('#KategoriModal').modal('show');
             });
         });
-    </script>
+    });
+</script>
 
-    <script>
-         $(document).on('click', '.btn-delete', function(e) {
+<script>
+    $(document).on('click', '.btn-delete', function(e) {
         e.preventDefault();
         var id = $(this).data('id');
-        
+
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data ini akan dihapus secara permanen!",
@@ -154,5 +154,5 @@
             }
         });
     });
-    </script>
+</script>
 @endsection
