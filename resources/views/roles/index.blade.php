@@ -31,18 +31,20 @@
                                 <div class="pcard-header">
                                     <div class="pcard-details">
                                         <span class="card-headline-text">{{ $item['role']->name }}</span>
-                                        <span class="card-caption">Prathik Developers, Bengaluru</span>
+                                        <span class="card-caption">{{ $item['description'] }}</span>
                                     </div>
                                     <div class="pcard-actions">
                                         <a href="#" class="btn-show fav-btn" data-id="{{ $item['role']->id }}">
                                             <i class="bx bxs-show"></i>
+                                            Lihat Detail
                                         </a>
+
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="pcard-info">
                                     <div class="info-item">
-                                        <span class="pcard-title-txt">Total Permission</span>
+                                        <span class="pcard-title-txt">Total Permission :</span>
                                         <span class="pcard-title-caption">{{ $item['total_permissions'] }}</span>
                                     </div>
                                 </div>
@@ -56,12 +58,13 @@
                                     @endphp
 
                                     @if($hasPermissions)
-                                    <div class="info-item">
-                                        <span class="pcard-title-txt">{{ ucfirst(str_replace('_', ' ', $category)) }}</span>
-                                        <ul>
+                                    <div class="info-item ">
+                                            
+                                        <span class="pcard-title-txt-manage"  style="background-color: black; color: white; padding: 5px; margin-left:5px; display: inline-block;">{{ ucfirst(str_replace('_', ' ', $category)) }}</span>
+                                        <ul class="list-group" style="padding-left:5px; padding-top:5px;">
                                             @foreach($perms as $perm)
                                             @if(in_array($perm, $item['permissions']))
-                                            <li>{{ ucfirst(str_replace('_', ' ', $perm)) }}</li>
+                                            <li class="list-group-item">{{ ucfirst(str_replace('_', ' ', $perm)) }}</li>
                                             @endif
                                             @endforeach
                                         </ul>
@@ -71,8 +74,19 @@
                                 </div>
 
                                 <div class="pcard-footer">
-                                    <button class="quick-btn">QUICK BOOK</button>
-                                    <button class="explore-btn">ADD TO CART</button>
+                                    <a href="{{ route('roles.edit', $item['role']->id) }}" class="btn btn-warning edit-btn ">
+                                    <i class='bx bx-edit-alt'></i>
+                                    Edit
+                                    </a>
+                                    <form action="{{ route('roles.destroy', $item['role']->id) }}" method="POST" role="alert"
+                                        alert-text="Apakah Anda yakin ingin menghapus role  {{ $item['role']->name }}?">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger delete-btn ">
+                                        <i class="bx bx-trash me-1"></i>
+                                        Delete
+                                    </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +107,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog  modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="roleModalLabel">Role Details</h5>
@@ -102,7 +116,7 @@
             <div class="modal-body">
                 <img id="role-image" src="" alt="Role Image" style="width: 250px; height: auto;">
 
-                <p id="role-name"></p>
+                <p  id="role-name"></p>
                 <p id="role-totalPermission"></p>
                 <div id="role-authoritiesPermission" class="pcard-info">
                     <!-- Permissions will be dynamically added here -->
@@ -118,154 +132,53 @@
 @endsection
 
 @section('javascript')
-<!-- <script>
-       
-       var table = $('#kategori-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{{ route("kategori.index") }}',
-            columns: [
-                { data: 'nama_kategori', name: 'nama_kategori' },
-                { data: 'gambar', name: 'gambar' },
-                { data: 'status', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ]
-        });
 
-</script> -->
 <script>
-$(document).ready(function() {
-    var scrollTop; // Variabel global untuk menyimpan posisi scroll
+    $(document).ready(function() {
+        // Event handler untuk membuka modal
+        $('.btn-show').click(function(event) {
+            event.preventDefault(); // Mencegah halaman scroll ke atas
 
-    // Simpan posisi scroll saat ini dan nonaktifkan scroll pada body
-    function disableScroll() {
-        // Simpan posisi scroll saat ini
-        scrollTop = $(window).scrollTop();
-        $('body').data('scrollTop', scrollTop);
+            var id = $(this).data('id');
 
-        // Nonaktifkan scroll pada body
-        $('body').css({
-            'position': 'fixed',
-            'top': -scrollTop,
-            'left': 0,
-            'width': '100%'
+            // Ambil data dari backend yang sudah dalam bentuk HTML
+            $.get('/roles/' + id, function(data) {
+                $('#role-name').text('Role Name: ' + data.name);
+                $('#role-totalPermission').text('Total Permissions: ' + data.total_permissions);
+                // Langsung load HTML dari backend
+                $('#role-authoritiesPermission').html(data.permissionsHtml);
+                $('#roleModal').modal('show');
+            });
         });
-    }
 
-    // Aktifkan kembali scroll pada body dan kembalikan posisi scroll
-    function enableScroll() {
-        // Kembalikan posisi scroll
-        var savedScrollTop = $('body').data('scrollTop');
-        $(window).scrollTop(savedScrollTop);
 
-        // Aktifkan kembali scroll pada body
-        $('body').css({
-            'position': '',
-            'top': '',
-            'left': '',
-            'width': ''
-        });
-    }
-
-    // Event handler untuk membuka modal
-    $('.btn-show').click(function() {
-        var id = $(this).data('id');
-        disableScroll(); // Nonaktifkan scroll
-
-        // Ambil data untuk modal
-        $.get('/roles/' + id, function(data) {
-            $('#role-name').text('Role Name: ' + data.name);
-            $('#role-totalPermission').text('Total Permissions: ' + data.total_permissions);
-
-            // Load permissions dynamically
-            var permissionsHtml = '';
-            $.each(data.authorities, function(category, perms) {
-                var hasPermissions = perms.some(perm => data.permissions.includes(perm));
-                if (hasPermissions) {
-                    permissionsHtml += '<div class="info-item">';
-                    permissionsHtml += '<span class="pcard-title-txt">' + capitalizeFirstLetter(category.replace(/_/g, ' ')) + '</span>';
-                    permissionsHtml += '<ul>';
-                    $.each(perms, function(index, perm) {
-                        if (data.permissions.includes(perm)) {
-                            permissionsHtml += '<li>' + capitalizeFirstLetter(perm.replace(/_/g, ' ')) + '</li>';
-                        }
-                    });
-                    permissionsHtml += '</ul>';
-                    permissionsHtml += '</div>';
+        $("form[role='alert']").submit(function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Hapus Data",
+                text: $(this).attr('alert-text'),
+                icon: 'warning',
+                allowOutsideClick: false,
+                showCancelButton: true,
+                cancelButtonText: "Cancel",
+                reverseButtons: true,
+                confirmButtonText: "Yes",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.submit();
+                    // todo: process of deleting categories
                 }
             });
-            $('#role-authoritiesPermission').html(permissionsHtml);
-
-            // Update image src if available
-            $('#role-image').attr('src', data.image ? '/storage/upload/emotikon/' + data.image : '');
-
-            $('#roleModal').modal('show');
         });
+
+
+
     });
 
-    // Event handler untuk tombol close modal
-    $('.btn-close').click(function() {
-        // Simpan posisi scroll saat ini agar tidak ter-reset ke atas
-        scrollTop = $(window).scrollTop();
-        $('body').data('scrollTop', scrollTop);
-
-        // Modal akan tertutup secara normal, dan posisi tetap
-    });
-
-    // Event handler saat modal sepenuhnya tertutup
-    $('#roleModal').on('hidden.bs.modal', function() {
-        enableScroll(); // Aktifkan scroll kembali saat modal sepenuhnya tertutup
-    });
-});
-
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 </script>
 
-<script>
-    $(document).on('click', '.btn-delete', function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
 
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data ini akan dihapus secara permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/kategori/' + id,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Terhapus!',
-                            'Data berhasil dihapus.',
-                            'success'
-                        ).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Gagal!',
-                            'Data gagal dihapus.',
-                            'error'
-                        );
-                    }
-                });
-            }
-        });
-    });
-</script>
 @endsection

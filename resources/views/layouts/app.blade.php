@@ -89,23 +89,27 @@
                             <div data-i18n="Authentications">Cerita Saya</div>
                         </a>
                         <ul class="menu-sub">
-                        @can('manage_kategori')
+                            @can('manage_kategori')
                             <li class="menu-item">
                                 <a href="{{route('kategori.index')}}" class="menu-link" target="_blank">
                                     <div data-i18n="Basic">Kategori</div>
                                 </a>
                             </li>
                             @endcan
+                            @can('manage_users')
                             <li class="menu-item">
-                                <a href="auth-register-basic.html" class="menu-link" target="_blank">
-                                    <div data-i18n="Basic">Register</div>
+                                <a href="{{route('users.index')}}" class="menu-link" target="_blank">
+                                    <div data-i18n="Basic">Users</div>
                                 </a>
                             </li>
+                            @endcan('manage_users')
+                            @can('manage_cerita')
                             <li class="menu-item">
-                                <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
-                                    <div data-i18n="Basic">Forgot Password</div>
+                                <a href="{{route('cerita.index')}}" class="menu-link" target="_blank">
+                                    <div data-i18n="Basic">Cerita</div>
                                 </a>
                             </li>
+                            @endcan('manage_cerita')
                         </ul>
                     </li>
 

@@ -277,13 +277,13 @@
 .card-headline-text {
   text-transform: uppercase;
   color: #1e206a;
-  font-size: 16px;
+  font-size: 25px;
   font-weight: 600;
 }
 
 .card-caption {
   color: #398e91;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -317,22 +317,28 @@
 }
 
 .pcard-title-txt {
-  font-size: 12px;
+  font-size: 15px;
   margin-bottom: 5px;
   text-transform: uppercase;
+  color: black;
 }
 
 
 .pcard-title-caption {
   font-size: 12px;
-  color: #398e91;
   font-weight: 600;
+  background-color: red;
+  color: white;
+  padding: 2px 12px;
+  text-align: center;
+  border-radius: 5px;
 }
 
 .pcard-footer {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+  gap: 10px;
 }
 
 .quick-btn, .explore-btn {
@@ -344,6 +350,21 @@
   cursor: pointer;
 }
 
+.pcard-footer .btn {
+  padding: 10px;
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box; /* Termasuk padding dalam lebar elemen */
+  flex: 1; /* Memastikan tombol mengisi ruang yang sama */
+}
+.pcard-footer form {
+  margin: 0; /* Hapus margin default pada form */
+  display: flex; /* Gunakan flexbox untuk form */
+  flex: 1; /* Memastikan form mengisi ruang yang sama seperti tombol */
+}
 .quick-btn {
   background-color: #4caa86;
   margin-right: 5px;
@@ -353,6 +374,28 @@
   background-color: #398e91;
   margin-left: 5px;
 }
+
+.delete-btn, .edit-btn {
+  flex: 1;
+  padding: 10px;
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #ff0000;
+  margin-right: 5px;
+}
+
+.edit-btn {
+
+  margin-right: 5px;
+}
+
+
+
 
 /* Responsiveness */
 @media (max-width: 768px) {
@@ -404,6 +447,7 @@
 
   .pcard-title-txt, .pcard-title-caption {
     font-size: 10px;
+   
   }
 
   .quick-btn, .explore-btn {
@@ -411,5 +455,12 @@
     padding: 8px;
   }
 }
+
+/* Tambahkan ini ke file CSS Anda */
+.no-scroll {
+  overflow: hidden;
+}
+
+
 
 

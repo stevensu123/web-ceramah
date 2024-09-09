@@ -10,10 +10,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
         $authorities = config('permission.authorities');
 
@@ -22,70 +19,103 @@ class RolePermissionSeeder extends Seeder
         $adminPermissions = [];
         $userPermissions = [];
 
-        foreach($authorities as $label => $permissions)
-        {
-            foreach ($permissions as $permission)
-            {
+        foreach ($authorities as $label => $permissions) {
+            foreach ($permissions as $permission) {
                 $listPermission[] = [
                     'name' => $permission,
                     'guard_name' => 'web',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
-                //superadmin
+                // Super admin
                 $superAdminPermissions[] = $permission;
-    
-                //admin
-                if(in_array($label,['manage_users','manage_quots']))
-                {
+
+                // Admin
+                if (in_array($label, ['manage_users', 'manage_quots'])) {
                     $adminPermissions[] = $permission;
                 }
-    
-                //ediotr
-                if(in_array($label,['manage_cerita']))
-                {
+
+                // Editor
+                if (in_array($label, ['manage_cerita'])) {
                     $userPermissions[] = $permission;
                 }
             }
-           
         }
 
-        
-        //insert permission
+        // Insert permissions
         Permission::insert($listPermission);
 
+        // Generate descriptions
+        $descriptionSuperAdmin = $this->generateDescription(
+            $this->getManagePermissions($superAdminPermissions, $authorities),
+            'SuperAdmin'
+        );
 
-        //inser role
-        //super admin
+        $descriptionAdmin = $this->generateDescription(
+            $this->getManagePermissions($adminPermissions, $authorities),
+            'Admin'
+        );
+
+        $descriptionUser = $this->generateDescription(
+            $this->getManagePermissions($userPermissions, $authorities),
+            'User'
+        );
+
+        // Insert roles with descriptions
         $superAdmin = Role::create([
             'name' => "SuperAdmin",
             'guard_name' => 'web',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'description' => $descriptionSuperAdmin,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        //admin
         $admin = Role::create([
             'name' => "Admin",
             'guard_name' => 'web',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'description' => $descriptionAdmin,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        //editor
         $user = Role::create([
             'name' => "User",
             'guard_name' => 'web',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'description' => $descriptionUser,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
-
-        //role -> permission
         $superAdmin->givePermissionTo($superAdminPermissions);
         $admin->givePermissionTo($adminPermissions);
         $user->givePermissionTo($userPermissions);
+    }
 
-  
+    
 
+    private function getManagePermissions(array $permissions, array $authorities): array
+    {
+        $managePermissions = [];
+        foreach ($authorities as $manageName => $availablePermissions) {
+            if (array_intersect($permissions, $availablePermissions)) {
+                $managePermissions[] = $manageName;
+            }
+        }
+        return $managePermissions;
+    }
+
+    private function generateDescription(array $managePermissions, string $roleName): string
+    {
+        if (count($managePermissions) > 0) {
+            if (count($managePermissions) == 1) {
+                return 'Control ' . $managePermissions[0] . ' manage permission for ' . $roleName;
+            } elseif (count($managePermissions) == 2) {
+                return 'Control ' . implode(' and ', $managePermissions) . ' manage permissions for ' . $roleName;
+            } else {
+                $last = array_pop($managePermissions);
+                return 'Control ' . implode(', ', $managePermissions) . ' and ' . $last . ' manage permissions for ' . $roleName;
+            }
+        } else {
+            return 'Create story access only for ' . $roleName;
+        }
     }
 }

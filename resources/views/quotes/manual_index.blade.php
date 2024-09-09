@@ -13,7 +13,7 @@
                     </div>
                     <div class="d-flex ms-2 ">
                         <a class="btn btn-warning me-2" href="{{ route('quotes.index') }}" role="button">Back Tampilan Awal</a>
-                        <a class="btn btn-primary" href="{{ route('quotes.autoCreate') }}" role="button">Tambah Quots</a>
+                        <a class="btn btn-primary" href="{{ route('quotes.manualCreate') }}" role="button">Tambah Quots</a>
                     </div>
                 </div>
                 <div class="col">
