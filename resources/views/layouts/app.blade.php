@@ -91,21 +91,21 @@
                         <ul class="menu-sub">
                             @can('manage_kategori')
                             <li class="menu-item">
-                                <a href="{{route('kategori.index')}}" class="menu-link" target="_blank">
+                                <a href="{{route('kategori.index')}}" class="menu-link" >
                                     <div data-i18n="Basic">Kategori</div>
                                 </a>
                             </li>
                             @endcan
                             @can('manage_users')
                             <li class="menu-item">
-                                <a href="{{route('users.index')}}" class="menu-link" target="_blank">
+                                <a href="{{route('users.index')}}" class="menu-link" >
                                     <div data-i18n="Basic">Users</div>
                                 </a>
                             </li>
                             @endcan('manage_users')
                             @can('manage_cerita')
                             <li class="menu-item">
-                                <a href="{{route('cerita.index')}}" class="menu-link" target="_blank">
+                                <a href="{{route('cerita.index')}}" class="menu-link" >
                                     <div data-i18n="Basic">Cerita</div>
                                 </a>
                             </li>

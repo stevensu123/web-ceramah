@@ -10,29 +10,25 @@
             <div id="accordionPopoutIcon" class="accordion accordion-popout">
                 @foreach(['pagi' => 'Waktu Pagi', 'siang' => 'Waktu Siang', 'sore' => 'Waktu Sore'] as $key => $label)
                 @php
-                // Ambil emosi berdasarkan data
                 $emosi = $data[$key]['nama_kategori_' . $key] ?? '';
-
-                // Tentukan kelas badge berdasarkan emosi
                 $badgeClass = '';
-
                 $messageColor = '';
                 $messageText = '';
 
                 if ($emosi == 'Marah') {
-                $badgeClass = 'text-danger'; // Merah
+                $badgeClass = 'text-danger';
                 $messageColor = 'red';
                 $messageText = 'Wah Hari ini Kamu Lagi Penuh Dengan Amarah, Ayo Redam Amarahmu Agar Hari mu Penuh Dengan Kebahagiaan';
                 } elseif ($emosi == 'Sedih') {
-                $badgeClass = 'text-success'; // Hijau
+                $badgeClass = 'text-success';
                 $messageColor = 'green';
                 $messageText = 'Wah Hari ini kenapa kamu bersedih, apakah ada yang mengakitimu atau membicarakan kamu yang jelek2, gpp anggap itu sebagai angin berlalu. ayo tersenyum dan berbahagialah';
                 } elseif ($emosi == 'Bahagia') {
-                $badgeClass = 'text-info'; // Biru
+                $badgeClass = 'text-info';
                 $messageColor = 'blue';
                 $messageText = 'wah kamu hari ini bahagia. bagus lanjutkan bahagiamu dan jangna lupa selalu bersyukur ya';
                 } else {
-                $badgeClass = 'text-secondary'; // Abu-abu jika tidak diketahui
+                $badgeClass = 'text-secondary';
                 }
                 @endphp
                 <div class="accordion-item card {{ $loop->first ? 'active' : '' }}">
@@ -54,11 +50,11 @@
                                         <img class="img-exists" src="{{ url($path) }}" alt="gambar">
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-9 personal-info">
                                     <h3>info Cerita {{$key}}</h3>
                                     <div class="form-group">
-                                    <h5 style="color: {{ $messageColor }}">{{ $messageText }}</h5>
+                                        <h5 style="color: {{ $messageColor }}">{{ $messageText }}</h5>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 control-label">Expresimu Hari ini:</label>
@@ -88,22 +84,25 @@
                                         <label class="col-md-3 control-label">Action:</label>
                                         <div class="col-md-8 d-flex align-items-center">
                                             <!-- Tombol Edit Cerita -->
+                                          
                                             <a href="{{ route('cerita.edit', ['id' => $ceritaId, 'time' => $key]) }}" class="btn btn-primary me-2">Edit Cerita</a>
+                                        
                                             <!-- Tombol Hidden -->
                                             <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#accordionPopoutIcon-{{ $key }}" aria-expanded="true" aria-controls="accordionPopoutIcon-{{ $key }}" id="hideButton">Tutup Cerita {{$key}}</button>
                                         </div>
                                     </div>
                                     </br>
                                     </br>
-                                </div> 
+                                </div>
                             </div>
                             @else
                             @if ($currentDate->isToday())
-                            <p>Belum ada cerita untuk waktu {{ $label }}.
-                                @if ($showAddButton)
-                                <a href="{{ route('cerita.edit', ['id' => $ceritaId, 'time' => $key]) }}" class="btn btn-primary">Tambah Cerita</a>
-                                @endif
-                            </p>
+                            @if ($updateAvailable[$key])
+                            
+                            <p>Belum ada cerita untuk waktu {{ $label }}. <a href="{{ route('cerita.edit', ['id' => $ceritaId, 'time' => $key]) }}" class="btn btn-primary">Update Cerita {{$label}}</a></p>
+                            @else
+                            <p>Belum ada cerita untuk waktu {{ $label }}. Update Cerita pada waktu {{ $label }} dari {{ $waktuData[$key]->jam_mulai }} sampai {{ $waktuData[$key]->jam_selesai }}.</p>
+                            @endif
                             @else
                             <p>Maaf, tanggal sudah lewat. Kamu tidak bisa mengupdate cerita kamu di waktu {{ $label }} hari.</p>
                             @endif
@@ -113,6 +112,7 @@
                 </div>
                 @endforeach
             </div>
+
             </br>
         </div>
     </div>

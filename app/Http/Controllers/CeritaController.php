@@ -37,8 +37,8 @@ class CeritaController extends Controller
             $parsedDate = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
             $user_id = auth()->id();
             // Konversi ke format yang diinginkan
-       
- 
+
+
         } catch (\Exception $e) {
             // Redirect atau tampilkan pesan error jika format tanggal salah
             return redirect()->back()->with('error', 'Format tanggal tidak valid. Harap gunakan format dd-mm-yyyy.');
@@ -46,8 +46,8 @@ class CeritaController extends Controller
 
         // Cek apakah ada cerita dengan tanggal yang sama
         $existingStory = Cerita::where('user_id', $user_id)
-        ->whereDate('tanggal', '=', $parsedDate)
-        ->first();
+            ->whereDate('tanggal', '=', $parsedDate)
+            ->first();
 
         if ($existingStory) {
             // Redirect ke halaman detail atau edit cerita yang sudah ada
@@ -111,19 +111,19 @@ class CeritaController extends Controller
 
         // Format tanggal yang diklik dari parameter URL
         $parsedDate = \Carbon\Carbon::parse($date)->format('Y-m-d');
-    
+
         // Cek apakah ada cerita dengan user_id dan tanggal yang diklik
         $cerita = Cerita::where('user_id', $user_id)
-                        ->whereDate('created_at', $parsedDate)
-                        ->first();
-           
+            ->whereDate('created_at', $parsedDate)
+            ->first();
+
 
         if ($cerita) {
             // Jika ada cerita, tampilkan view yang sudah ada ceritanya
             return view('cerita.exists', compact('parsedDate', 'cerita'));
         } else {
             // Jika tidak ada cerita, tampilkan view untuk menambahkan cerita baru
-            return view('cerita.create_cerita', compact('parsedDate','cerita'));
+            return view('cerita.create_cerita', compact('parsedDate', 'cerita'));
         }
     }
     // end function
@@ -287,71 +287,156 @@ class CeritaController extends Controller
         return view('cerita.exists', compact('data', 'currentDate', 'ceritaId', 'showAddButton'));
     }
 
-    public function show_data()
-    {
-        $user_id = auth()->id();
-        $waktuIds = Waktu::pluck('id')->toArray();
-        $currentDate = Carbon::today(); // Ini adalah objek Carbon
+    // public function show_data()
+    // {
+    //     $user_id = auth()->id();
+    //     $waktuIds = Waktu::pluck('id')->toArray();
+    //     $currentDate = Carbon::today(); // Ini adalah objek Carbon
 
-        $ceritas = Cerita::with('kategoris', 'waktuCeritas')
-            ->where('user_id', $user_id)
-            ->whereRaw("DATE_FORMAT(tanggal, '%d-%m-%Y') = ?", [$currentDate->format('d-m-Y')])
-            ->get();
+    //     $ceritas = Cerita::with('kategoris', 'waktuCeritas')
+    //         ->where('user_id', $user_id)
+    //         ->whereRaw("DATE_FORMAT(tanggal, '%d-%m-%Y') = ?", [$currentDate->format('d-m-Y')])
+    //         ->get();
 
-        // Mapping data dengan default null jika kosong
-        $data = [
-            'pagi' => $ceritas->filter(function ($cerita) {
-                return !empty($cerita->nama_kategori_pagi);
-            })->map(function ($cerita) {
-                return [
-                    'nama_kategori_pagi' => $cerita->nama_kategori_pagi ?? null,
-                    'gambar_pagi' => $cerita->gambar_pagi ?? null,
-                    'keterangan_pagi' => $cerita->keterangan_pagi ?? null,
-                    'text_cerita_pagi' => $cerita->text_cerita_pagi ?? null,
-                ];
-            })->first() ?? null,
+    //     // Mapping data dengan default null jika kosong
+    //     $data = [
+    //         'pagi' => $ceritas->filter(function ($cerita) {
+    //             return !empty($cerita->nama_kategori_pagi);
+    //         })->map(function ($cerita) {
+    //             return [
+    //                 'nama_kategori_pagi' => $cerita->nama_kategori_pagi ?? null,
+    //                 'gambar_pagi' => $cerita->gambar_pagi ?? null,
+    //                 'keterangan_pagi' => $cerita->keterangan_pagi ?? null,
+    //                 'text_cerita_pagi' => $cerita->text_cerita_pagi ?? null,
+    //             ];
+    //         })->first() ?? null,
 
-            'siang' => $ceritas->filter(function ($cerita) {
-                return !empty($cerita->nama_kategori_siang);
-            })->map(function ($cerita) {
-                return [
-                    'nama_kategori_siang' => $cerita->nama_kategori_siang ?? null,
-                    'gambar_siang' => $cerita->gambar_siang ?? null,
-                    'keterangan_siang' => $cerita->keterangan_siang ?? null,
-                    'text_cerita_siang' => $cerita->text_cerita_siang ?? null,
-                ];
-            })->first() ?? null,
+    //         'siang' => $ceritas->filter(function ($cerita) {
+    //             return !empty($cerita->nama_kategori_siang);
+    //         })->map(function ($cerita) {
+    //             return [
+    //                 'nama_kategori_siang' => $cerita->nama_kategori_siang ?? null,
+    //                 'gambar_siang' => $cerita->gambar_siang ?? null,
+    //                 'keterangan_siang' => $cerita->keterangan_siang ?? null,
+    //                 'text_cerita_siang' => $cerita->text_cerita_siang ?? null,
+    //             ];
+    //         })->first() ?? null,
 
-            'sore' => $ceritas->filter(function ($cerita) {
-                return !empty($cerita->nama_kategori_sore);
-            })->map(function ($cerita) {
-                return [
-                    'nama_kategori_sore' => $cerita->nama_kategori_sore ?? null,
-                    'gambar_sore' => $cerita->gambar_sore ?? null,
-                    'keterangan_sore' => $cerita->keterangan_sore ?? null,
-                    'text_cerita_sore' => $cerita->text_cerita_sore ?? null,
-                ];
-            })->first() ?? null,
-        ];
+    //         'sore' => $ceritas->filter(function ($cerita) {
+    //             return !empty($cerita->nama_kategori_sore);
+    //         })->map(function ($cerita) {
+    //             return [
+    //                 'nama_kategori_sore' => $cerita->nama_kategori_sore ?? null,
+    //                 'gambar_sore' => $cerita->gambar_sore ?? null,
+    //                 'keterangan_sore' => $cerita->keterangan_sore ?? null,
+    //                 'text_cerita_sore' => $cerita->text_cerita_sore ?? null,
+    //             ];
+    //         })->first() ?? null,
+    //     ];
 
-        // Temukan slot kosong
-        $emptySlots = array_filter($data, function ($item) {
-            return is_null($item);
-        });
+    //     // Temukan slot kosong
+    //     $emptySlots = array_filter($data, function ($item) {
+    //         return is_null($item);
+    //     });
 
-        // Tentukan apakah ada slot kosong
-        $showAddButton = count($emptySlots) > 0;
+    //     // Tentukan apakah ada slot kosong
+    //     $showAddButton = count($emptySlots) > 0;
 
-        // Cari ID cerita yang ada
-        $ceritaId = $ceritas->first()->id ?? null;
+    //     // Cari ID cerita yang ada
+    //     $ceritaId = $ceritas->first()->id ?? null;
 
-        return view('cerita.exists', compact('data', 'currentDate', 'ceritaId', 'showAddButton'));
-    }
+    //     return view('cerita.exists', compact('data', 'currentDate', 'ceritaId', 'showAddButton'));
+    // }
     //
+    public function show_data()
+{
+    $user_id = auth()->id();
+    $currentDate = Carbon::today();
+    
+    // Mengambil data waktu dari tabel 'waktus'
+    $waktuPagi = Waktu::where('title', 'pagi')->first();
+    $waktuSiang = Waktu::where('title', 'siang')->first();
+    $waktuSore = Waktu::where('title', 'sore')->first();
 
+    if (!$waktuPagi || !$waktuSiang || !$waktuSore) {
+        return response()->json(['error' => 'Data waktu belum diatur.'], 404);
+    }
 
+    $now = Carbon::now();
 
+    $ceritas = Cerita::with('kategoris', 'waktuCeritas')
+        ->where('user_id', $user_id)
+        ->whereRaw("DATE_FORMAT(tanggal, '%d-%m-%Y') = ?", [$currentDate->format('d-m-Y')])
+        ->get();
 
+    // Mapping data dengan default null jika kosong
+    $data = [
+        'pagi' => $ceritas->filter(function ($cerita) {
+            return !empty($cerita->nama_kategori_pagi);
+        })->map(function ($cerita) {
+            return [
+                'nama_kategori_pagi' => $cerita->nama_kategori_pagi ?? null,
+                'gambar_pagi' => $cerita->gambar_pagi ?? null,
+                'keterangan_pagi' => $cerita->keterangan_pagi ?? null,
+                'text_cerita_pagi' => $cerita->text_cerita_pagi ?? null,
+            ];
+        })->first() ?? null,
+
+        'siang' => $ceritas->filter(function ($cerita) {
+            return !empty($cerita->nama_kategori_siang);
+        })->map(function ($cerita) {
+            return [
+                'nama_kategori_siang' => $cerita->nama_kategori_siang ?? null,
+                'gambar_siang' => $cerita->gambar_siang ?? null,
+                'keterangan_siang' => $cerita->keterangan_siang ?? null,
+                'text_cerita_siang' => $cerita->text_cerita_siang ?? null,
+            ];
+        })->first() ?? null,
+
+        'sore' => $ceritas->filter(function ($cerita) {
+            return !empty($cerita->nama_kategori_sore);
+        })->map(function ($cerita) {
+            return [
+                'nama_kategori_sore' => $cerita->nama_kategori_sore ?? null,
+                'gambar_sore' => $cerita->gambar_sore ?? null,
+                'keterangan_sore' => $cerita->keterangan_sore ?? null,
+                'text_cerita_sore' => $cerita->text_cerita_sore ?? null,
+            ];
+        })->first() ?? null,
+    ];
+
+    // Tentukan apakah ada slot kosong
+    $emptySlots = array_filter($data, function ($item) {
+        return is_null($item);
+    });
+    $showAddButton = count($emptySlots) > 0;
+
+    // Cari ID cerita yang ada
+    $ceritaId = $ceritas->first()->id ?? null;
+
+    // Tentukan waktu yang masih bisa diupdate
+    $updateAvailable = [
+        'pagi' => false,
+        'siang' => false,
+        'sore' => false,
+    ];
+
+    $waktuData = [
+        'pagi' => $waktuPagi,
+        'siang' => $waktuSiang,
+        'sore' => $waktuSore,
+    ];
+
+    foreach (['pagi' => $waktuPagi, 'siang' => $waktuSiang, 'sore' => $waktuSore] as $key => $waktu) {
+        if ($now->between(Carbon::createFromTimeString($waktu->jam_mulai), Carbon::createFromTimeString($waktu->jam_selesai))) {
+            $updateAvailable[$key] = true;
+        }
+    }
+
+    return view('cerita.exists', compact('data', 'currentDate', 'ceritaId', 'showAddButton', 'updateAvailable', 'waktuData'));
+}
+
+    
     /**
      * Store a newly created resource in storage.
      */
