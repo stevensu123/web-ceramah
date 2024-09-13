@@ -26,7 +26,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth',], function () {
 
     //dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -51,10 +51,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('/roles', RoleController::class); 
    
     Route::resource('/users', UsersController::class);
-   
+    Route::get('/pending/users', [UsersController::class, 'pendingView'])->name('users.pending-view');
+    Route::get('fetch-users', [UsersController::class, 'fetch'])->name('fetch.users');
+    Route::put('/update-status/{id}', [UsersController::class, 'updateStatus'])->name('update-status');
+
     Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);
-    Route::get('/cerita/create/{date}', [CeritaController::class, 'create'])->name('cerita.create');
+    Route::get('/cerita/create/{date}', [CeritaController::class, 'create'])->name('cerita.create')->middleware('prevent.manual.url.access');
     Route::get('/cerita/view/create/{date}', [CeritaController::class, 'create_view'])->name('cerita.create_view');
     Route::get('/cerita/{cerita}/date/{date}', [CeritaController::class, 'show_data'])->name('cerita.show_data');
     Route::get('/cerita/view/date-expired', [CeritaController::class, 'show_data_expired_date'])->name('cerita.date_expired');

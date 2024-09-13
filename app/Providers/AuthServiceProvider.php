@@ -44,6 +44,16 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
+        Gate::define('manage_roles', function($user){
+            return $user->hasAnyPermission([
+                'roles_show',
+                'roles_create',
+                'roles_update',
+                'roles_detail',
+                'roles_delete'
+            ]);
+        });
+
         Gate::define('manage_cerita', function($user){
             return $user->hasAnyPermission([
                 'cerita_show',

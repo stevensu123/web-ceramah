@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Tag lainnya -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
@@ -44,6 +46,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+
 </head>
 
 <body>
@@ -91,25 +95,54 @@
                         <ul class="menu-sub">
                             @can('manage_kategori')
                             <li class="menu-item">
-                                <a href="{{route('kategori.index')}}" class="menu-link" >
+                                <a href="{{route('kategori.index')}}" class="menu-link">
                                     <div data-i18n="Basic">Kategori</div>
                                 </a>
                             </li>
                             @endcan
                             @can('manage_users')
                             <li class="menu-item">
-                                <a href="{{route('users.index')}}" class="menu-link" >
+                                <a href="{{route('users.index')}}" class="menu-link">
                                     <div data-i18n="Basic">Users</div>
                                 </a>
                             </li>
                             @endcan('manage_users')
                             @can('manage_cerita')
                             <li class="menu-item">
-                                <a href="{{route('cerita.index')}}" class="menu-link" >
+                                <a href="{{route('cerita.index')}}" class="menu-link">
                                     <div data-i18n="Basic">Cerita</div>
                                 </a>
                             </li>
                             @endcan('manage_cerita')
+
+                            <li class="menu-item">
+                                <a href="{{route('roles.index')}}" class="menu-link">
+                                    <div data-i18n="Basic">Roles</div>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="menu-item">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+                            <div data-i18n="Authentications">Cerita Saya</div>
+                        </a>
+                        <ul class="menu-sub">
+
+                            <li class="menu-item">
+                                <a href="{{route('users.index')}}" class="menu-link">
+                                    <div data-i18n="Basic"> Users</div>
+                                </a>
+                            </li>
+
+
+                            <li class="menu-item">
+                                <a href="{{route('users.pending-view')}}" class="menu-link">
+                                    <div data-i18n="Basic">Pendding Users</div>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
 
@@ -127,7 +160,6 @@
                             <i class="bx bx-menu bx-sm"></i>
                         </a>
                     </div>
-
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
                         <div class="navbar-nav align-items-center">
@@ -137,21 +169,49 @@
                             </div>
                         </div>
                         <!-- /Search -->
-
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <!-- Place this tag where you want the button to render. -->
-                            <!-- <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li> -->
+                            <!-- Notifications -->
+                            <li class="nav-item lh-1 me-3">
+    <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
+        <i class="bx bx-bell fs-4 lh-0"></i>
+        @if($notificationCount > 0)
+        <span class="badge bg-danger "  id="notificationBadge">{{ $notificationCount }}</span>
+        @endif
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @foreach($notifications as $notification)
+        <li>
+            <a class="dropdown-item" href="#">
+                <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bx bx-info-circle me-2"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
+                        <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
+                    </div>
+                </div>
+            </a>
+        </li>
+        @endforeach
+        <li>
+            <div class="dropdown-divider"></div>
+        </li>
+        <li>
+            <a class="dropdown-item text-center" href="{{ url('/admin/pending-users') }}">
+                <i class="bx bx-chevron-down me-2"></i>
+                <span class="align-middle">View All</span>
+            </a>
+        </li>
+    </ul>
+</li>
 
+
+                            <!-- /Notifications -->
+
+                            <ul id="notifications-list" class="dropdown-menu">
+                                <!-- Notifikasi akan dimuat di sini -->
+                            </ul>
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -204,7 +264,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}" style="cursor: pointer" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                     document.getElementById('logout-form').submit();">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
@@ -218,6 +278,7 @@
                         </ul>
                     </div>
                 </nav>
+
 
                 <!-- / Navbar -->
 
@@ -290,6 +351,102 @@
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+   
+<script>
+    // Inisialisasi badge dengan nilai dari variabel Blade
+    $(document).ready(function() {
+        var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
+        $('#notificationBadge').text(initialCount);
+        console.log('Initial Badge Count:', initialCount);
+    });
+
+    // Inisialisasi Pusher dengan key dan cluster yang benar
+    var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
+        cluster: 'ap1',
+        encrypted: true
+    });
+
+    // Berlangganan pada channel
+    var channel = pusher.subscribe('admin-channel');
+
+    // Listen event ketika user baru mendaftar
+    channel.bind('App\\Events\\UserRegistered', function(data) {
+        console.log('Received data:', data); // Debugging: Cek data yang diterima
+
+        // Tambahkan notifikasi baru ke dropdown
+        var notificationItem = `
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="bx bx-info-circle me-2"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">` + data.message + `</span>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+        $('.dropdown-menu').prepend(notificationItem);
+
+        // Update badge count
+        var badge = $('#notificationBadge');
+        var currentCount = parseInt(badge.text().trim(), 10) || 0; // Ambil nilai saat ini sebagai integer, default 0
+        var newCount = currentCount + 1; // Tambah 1 pada count saat ini
+        console.log('Current Badge Count:', currentCount); // Debugging: Cek nilai badge saat ini
+        badge.text(newCount); // Update badge dengan nilai baru
+        console.log('Updated Badge Count:', newCount); // Debugging: Cek nilai badge yang sudah diperbarui
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Fungsi untuk mengupdate waktu relatif
+    function updateTime() {
+        document.querySelectorAll('small.text-muted[data-time]').forEach(function (element) {
+            const time = element.getAttribute('data-time');
+            const createdAt = new Date(time);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - createdAt) / 1000);
+
+            let displayTime;
+
+            if (diffInSeconds < 60) {
+                displayTime = `${diffInSeconds} detik yang lalu`;
+            } else if (diffInSeconds < 3600) {
+                const diffInMinutes = Math.floor(diffInSeconds / 60);
+                displayTime = `${diffInMinutes} menit yang lalu`;
+            } else if (diffInSeconds < 86400) {
+                const diffInHours = Math.floor(diffInSeconds / 3600);
+                displayTime = `${diffInHours} jam yang lalu`;
+            } else {
+                const diffInDays = Math.floor(diffInSeconds / 86400);
+                displayTime = `${diffInDays} hari yang lalu`;
+            }
+
+            element.textContent = displayTime;
+        });
+    }
+
+    // Update waktu setiap detik
+    setInterval(updateTime, 1000);
+
+    // Update waktu pada saat pertama kali
+    updateTime();
+});
+</script>
+
+
+
+
+
+
+
+
+
 
 </body>
 @include('sweetalert::alert')

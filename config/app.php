@@ -159,7 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        App\Providers\NotificationServiceProvider::class,
         /*
          * Application Service Providers...
          */

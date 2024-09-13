@@ -154,11 +154,11 @@ class RoleController extends Controller
             $hasPermissions = collect($perms)->intersect($permissions)->isNotEmpty();
             if ($hasPermissions) {
                 $permissionsHtml .= '<div class="info-item">';
-                $permissionsHtml .= '<span class="pcard-title-txt">' . ucfirst(str_replace('_', ' ', $category)) . '</span>';
-                $permissionsHtml .= '<ul>';
+                $permissionsHtml .= '<span class="pcard-title-txt" style="background-color: black; color: white; padding: 5px; margin-left:5px; display: inline-block;">' . ucfirst(str_replace('_', ' ', $category)) . '</span>';
+                $permissionsHtml .= '<ul class="list-group" style="padding-left:5px; padding-top:5px;">';
                 foreach ($perms as $perm) {
                     if (in_array($perm, $permissions)) {
-                        $permissionsHtml .= '<li>' . ucfirst(str_replace('_', ' ', $perm)) . '</li>';
+                        $permissionsHtml .= '<li class="list-group-item">' . ucfirst(str_replace('_', ' ', $perm)) . '</li>';
                     }
                 }
                 $permissionsHtml .= '</ul>';

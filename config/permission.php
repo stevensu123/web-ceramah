@@ -26,6 +26,13 @@ return [
             'users_detail',
             'users_delete'
         ],
+        'manage_roles' => [
+            'roles_show',
+            'roles_create',
+            'roles_update',
+            'roles_detail',
+            'roles_delete'
+        ],
         'manage_cerita' => [
             'cerita_show',
             'cerita_create',

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
@@ -20,6 +23,43 @@ class UsersController extends Controller
 
     // Kirim data user ke view
     return view('users.index', compact('users'));
+    }
+
+    public function fetch()
+    {
+        $users = User::with('roles')->where('status', 'pending');
+
+        return DataTables::of($users)
+            ->addColumn('roles', function($user) {
+                return $user->roles->pluck('name')->implode(', ');
+            })
+            ->addColumn('status', function($user) {
+                return '<span class="badge bg-label-' . ($user->status == 'approved' ? 'success' : 'danger') . ' me-1" id="status-' . $user->id . '" data-id="' . $user->id . '" onclick="updateStatus(this)">' . $user->status . '</span>';
+            })
+            ->addColumn('action', function($user) {
+                return '<div class="btn-group" role="group" aria-label="Action buttons">
+                            <a href="' . route('users.edit', $user->id) . '" class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger btn-delete" data-name="' . $user->name . '" data-id="' . $user->id . '">
+                                <i class="bx bx-trash me-1"></i> Delete
+                            </button>
+                        </div>';
+            })
+            ->rawColumns(['status', 'action'])
+            ->make(true);
+    }
+
+    public function pendingView()
+    {
+        $notifications = Auth::user()->notifications; 
+        $users = User::with('roles')
+                ->where('status', 'pending')
+                ->get();
+                // $notifications1 = DB::table('notifications')
+                // ->where('data', 'LIKE', '%"user_id":46%')
+                // ->get();
+                // dd($notifications1);
+    // Kirim data user ke view
+    return view('users.pendding', compact('users' , 'notifications'));
     }
 
     /**
@@ -84,6 +124,7 @@ class UsersController extends Controller
         return view('users.edit', compact('user', 'roles'));
     }
 
+
     /**
      * Update the specified resource in storage.
      */
@@ -114,6 +155,15 @@ class UsersController extends Controller
         $user->syncRoles($validated['roles']);
     
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $kt = User::findOrFail($id);
+        $kt->status = $request->input('status');
+        $kt->save();
+
+        return response()->json(['success' => true]);
     }
 
     /**
