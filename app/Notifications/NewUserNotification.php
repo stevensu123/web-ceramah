@@ -24,7 +24,7 @@ class NewUserNotification extends Notification implements ShouldQueue
         return ['database', 'broadcast'];
     }
 
-    public function toArray($notifiable)
+    public function toArray($notifiaable)
     {
         return [
             'message' => 'A new user has registered: ' . $this->user->name,

@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Events\UserDeleted;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\UserDeletedNotification;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -68,29 +70,22 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::deleting(function ($user) {
-            Log::info('User is being deleted: ' . $user->id);
-    
-            // Hapus notifikasi yang terkait dengan user ini
-            $deletedUserNotifications = DB::table('notifications')
-                ->where('notifiable_id', $user->id)
-                ->where('notifiable_type', User::class)
-                ->delete();
-    
-            Log::info('Jumlah notifikasi untuk user ' . $user->id . ' yang dihapus: ' . $deletedUserNotifications);
-    
-            // Hapus notifikasi terkait role jika diperlukan
-            $roles = Role::whereIn('name', ['superadmin', 'admin'])->get();
+            // Ambil semua pengguna dengan role 'Superadmin' dan 'Admin'
+            $roles = ['SuperAdmin', 'Admin']; // Sesuaikan dengan nama role di database
             
-            foreach ($roles as $role) {
-                $deletedRoleNotifications = DB::table('notifications')
-                    ->where('notifiable_id', $role->id)
-                    ->where('notifiable_type', Role::class)
-                    ->delete();
-                
-                Log::info('Jumlah notifikasi untuk role ' . $role->name . ' yang dihapus: ' . $deletedRoleNotifications);
+            // Dapatkan semua pengguna dengan role yang sesuai
+            $admins = User::role($roles)->get();
+            
+            foreach ($admins as $admin) {
+                // Kirim notifikasi kepada setiap admin
+                $admin->notify(new UserDeletedNotification($user));
             }
+    
+            // Broadcasting event
+            event(new UserDeleted($user));
         });
     }
+    
 
 
     public function notifications()

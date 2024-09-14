@@ -4,20 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\DatabaseNotification;
 
-class DashboardController extends Controller
+class NotificationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $user = Auth::user();
-        $notifications = $user->notifications()->whereNull('read_at')->latest()->take(5)->get();
-        $notificationCount = $user->unreadNotifications()->count();
-    
-        return view('dashboard.index', compact('notifications', 'notificationCount'));
+        //
     }
+
+
+    public function markAsRead($id)
+    {
+        $notification = auth()->user()->notifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['status' => 'success']);
+    }
+    
 
     /**
      * Show the form for creating a new resource.

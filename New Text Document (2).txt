@@ -1,0 +1,42 @@
+ protected static function booted()
+    {
+        static::deleting(function ($user) {
+            Log::info('User is being deleted: ' . $user->id);
+    
+            // Hapus notifikasi yang terkait dengan user ini secara langsung
+            $deletedUserNotifications = DB::table('notifications')
+                ->where('notifiable_id', $user->id)
+                ->where('notifiable_type', User::class)
+                ->delete();
+    
+            Log::info('Jumlah notifikasi untuk user ' . $user->id . ' yang dihapus: ' . $deletedUserNotifications);
+    
+            // Hapus notifikasi yang menyimpan user_id dalam kolom data (JSON field)
+            $deletedNotificationsByUserId = DB::table('notifications')
+                ->whereJsonContains('data->user_id', $user->id)
+                ->delete();
+    
+            Log::info('Jumlah notifikasi berdasarkan user_id ' . $user->id . ' yang dihapus: ' . $deletedNotificationsByUserId);
+    
+            // Hapus notifikasi terkait role jika diperlukan
+            $roles = Role::whereIn('name', ['superadmin', 'admin'])->get();
+    
+            foreach ($roles as $role) {
+                $deletedRoleNotifications = DB::table('notifications')
+                    ->where('notifiable_id', $role->id)
+                    ->where('notifiable_type', Role::class)
+                    ->delete();
+    
+                Log::info('Jumlah notifikasi untuk role ' . $role->name . ' yang dihapus: ' . $deletedRoleNotifications);
+            }
+
+             // Kirim notifikasi dan event jika pengguna adalah admin atau superadmin
+        $rolesNames = ['superadmin', 'admin'];
+        $currentUserRoles = $user->roles->pluck('name')->toArray();
+        
+        if (array_intersect($rolesNames, $currentUserRoles)) {
+            Notification::send($user, new UserDeletedNotification($user->id));
+            event(new UserDeleted($user));
+        }
+        });
+    }

@@ -460,7 +460,27 @@
 .no-scroll {
   overflow: hidden;
 }
+.table-responsive {
+  overflow: hidden; /* Menyembunyikan scroll horizontal */
+  width: 100%; /* Pastikan kontainer tabel menggunakan seluruh lebar */
+}
 
+#users-table {
+  width: 100%; /* Pastikan tabel menggunakan seluruh lebar kontainer */
+  table-layout: fixed; /* Menetapkan lebar kolom tetap */
+  border-collapse: collapse; /* Menghindari jarak antar border sel */
+}
 
+#users-table th, #users-table td {
+  white-space: nowrap; /* Pastikan teks tetap pada satu baris */
+  text-overflow: ellipsis; /* Menambahkan ellipsis jika teks terlalu panjang */
+  overflow: hidden; /* Menyembunyikan teks yang melebihi lebar kolom */
+}
+
+.dataTables_wrapper .dataTables_filter {
+  float: right;
+  text-align: right;
+  margin-right: 4px;
+}
 
 

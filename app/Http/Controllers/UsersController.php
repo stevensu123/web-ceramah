@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Events\UserStatusUpdated;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\UserStatusUpdatedNotification;
 
 class UsersController extends Controller
 {
@@ -34,8 +36,14 @@ class UsersController extends Controller
                 return $user->roles->pluck('name')->implode(', ');
             })
             ->addColumn('status', function($user) {
-                return '<span class="badge bg-label-' . ($user->status == 'approved' ? 'success' : 'danger') . ' me-1" id="status-' . $user->id . '" data-id="' . $user->id . '" onclick="updateStatus(this)">' . $user->status . '</span>';
+                return '<span class="badge bg-label-' . ($user->status == 'approved' ? 'success' : 'danger') . ' me-1" 
+                        id="status-' . $user->id . '" 
+                        data-id="' . $user->id . '" 
+                        data-username="' . $user->name . '" 
+                        onclick="updateStatus(this)">
+                        ' . $user->status . '</span>';
             })
+            
             ->addColumn('action', function($user) {
                 return '<div class="btn-group" role="group" aria-label="Action buttons">
                             <a href="' . route('users.edit', $user->id) . '" class="btn btn-warning">Edit</a>
@@ -159,11 +167,20 @@ class UsersController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $kt = User::findOrFail($id);
-        $kt->status = $request->input('status');
-        $kt->save();
-
-        return response()->json(['success' => true]);
+        $user = User::findOrFail($id);
+        $user->status = $request->status; // Mengubah status jadi approved
+        $user->save();
+    
+        // Kirimkan notifikasi ke admin dan superadmin
+        $adminUsers = User::role(['admin', 'superadmin'])->get(); // Ambil user dengan role admin dan superadmin
+        foreach ($adminUsers as $admin) {
+            $admin->notify(new UserStatusUpdatedNotification($user)); // Kirim notifikasi
+        }
+    
+        // Trigger event untuk broadcast
+        event(new UserStatusUpdated($user));
+    
+        return response()->json(['success' => true, 'message' => 'Status berhasil diubah']);
     }
 
     /**

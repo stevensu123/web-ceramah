@@ -42,8 +42,9 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $user->assignRole("User");
+     
         if ($user) {
+            $user->assignRole("User");
         // Panggil event hanya sekali setelah user berhasil dibuat
         event(new UserRegistered($user));
     }

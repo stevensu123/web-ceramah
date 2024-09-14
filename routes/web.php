@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\CeritaController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KategoriController;
-use App\Http\Controllers\QuoteController;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\RoleController;
 use App\Models\Cerita;
 use App\Models\Kategori;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CeritaController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 
 /*~
 |--------------------------------------------------------------------------
@@ -54,6 +55,12 @@ Route::group(['middleware' => 'auth',], function () {
     Route::get('/pending/users', [UsersController::class, 'pendingView'])->name('users.pending-view');
     Route::get('fetch-users', [UsersController::class, 'fetch'])->name('fetch.users');
     Route::put('/update-status/{id}', [UsersController::class, 'updateStatus'])->name('update-status');
+  // web.php
+
+Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+
+
+
 
     Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);

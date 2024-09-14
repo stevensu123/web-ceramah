@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
 {
@@ -26,7 +27,11 @@ class NotificationServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 
                 // Ambil semua notifikasi pengguna dan urutkan berdasarkan waktu terbaru
-                $notifications = $user->notifications->sortByDesc('created_at')->take(5);
+                // Pastikan hanya mengambil 5 notifikasi terbaru
+                $notifications = $user->unreadNotifications()
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
                 
                 // Hitung jumlah notifikasi yang belum dibaca
                 $notificationCount = $user->unreadNotifications->count();
@@ -39,7 +44,7 @@ class NotificationServiceProvider extends ServiceProvider
                 $view->with('notifications', collect());
                 $view->with('notificationCount', 0);
             }
-        });
+        }); 
         
     }
     

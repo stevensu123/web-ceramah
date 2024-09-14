@@ -172,39 +172,40 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Notifications -->
                             <li class="nav-item lh-1 me-3">
-    <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-        <i class="bx bx-bell fs-4 lh-0"></i>
-        @if($notificationCount > 0)
-        <span class="badge bg-danger "  id="notificationBadge">{{ $notificationCount }}</span>
-        @endif
+                                <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <i class="bx bx-bell fs-4 lh-0"></i>
+
+                                    <span class="badge bg-danger " id="notificationBadge">{{ $notificationCount }}</span>
+
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                @foreach($notifications as $notification)
+<li data-id="{{ $notification->id }}">
+    <a class="dropdown-item" href="#" data-id="{{ $notification->id }}">
+        <div class="d-flex">
+            <div class="flex-shrink-0 me-3">
+                <i class="bx bx-info-circle me-2"></i>
+            </div>
+            <div class="flex-grow-1">
+                <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
+                <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
+            </div>
+        </div>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end">
-        @foreach($notifications as $notification)
-        <li>
-            <a class="dropdown-item" href="#">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 me-3">
-                        <i class="bx bx-info-circle me-2"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
-                        <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
-                    </div>
-                </div>
-            </a>
-        </li>
-        @endforeach
-        <li>
-            <div class="dropdown-divider"></div>
-        </li>
-        <li>
-            <a class="dropdown-item text-center" href="{{ url('/admin/pending-users') }}">
-                <i class="bx bx-chevron-down me-2"></i>
-                <span class="align-middle">View All</span>
-            </a>
-        </li>
-    </ul>
 </li>
+@endforeach
+
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-center" href="{{ url('/admin/pending-users') }}">
+                                            <i class="bx bx-chevron-down me-2"></i>
+                                            <span class="align-middle">View All</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
 
                             <!-- /Notifications -->
@@ -352,30 +353,30 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-   
-<script>
-    // Inisialisasi badge dengan nilai dari variabel Blade
-    $(document).ready(function() {
-        var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
-        $('#notificationBadge').text(initialCount);
-        console.log('Initial Badge Count:', initialCount);
-    });
 
-    // Inisialisasi Pusher dengan key dan cluster yang benar
-    var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
-        cluster: 'ap1',
-        encrypted: true
-    });
+    <!-- <script>
+        // Inisialisasi badge dengan nilai dari variabel Blade
+        $(document).ready(function() {
+            var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
+            $('#notificationBadge').text(initialCount);
+            console.log('Initial Badge Count:', initialCount);
+        });
 
-    // Berlangganan pada channel
-    var channel = pusher.subscribe('admin-channel');
+        // Inisialisasi Pusher dengan key dan cluster yang benar
+        var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
+            cluster: 'ap1',
+            encrypted: true
+        });
 
-    // Listen event ketika user baru mendaftar
-    channel.bind('App\\Events\\UserRegistered', function(data) {
-        console.log('Received data:', data); // Debugging: Cek data yang diterima
+        // Berlangganan pada channel
+        var channel = pusher.subscribe('admin-channel');
 
-        // Tambahkan notifikasi baru ke dropdown
-        var notificationItem = `
+        // Listen event ketika user baru mendaftar
+        channel.bind('App\\Events\\UserRegistered', function(data) {
+            console.log('Received data:', data); // Debugging: Cek data yang diterima
+
+            // Tambahkan notifikasi baru ke dropdown
+            var notificationItem = `
             <li>
                 <a class="dropdown-item" href="#">
                     <div class="d-flex">
@@ -390,54 +391,200 @@
                 </a>
             </li>
         `;
-        $('.dropdown-menu').prepend(notificationItem);
+            $('.dropdown-menu').prepend(notificationItem);
 
-        // Update badge count
-        var badge = $('#notificationBadge');
-        var currentCount = parseInt(badge.text().trim(), 10) || 0; // Ambil nilai saat ini sebagai integer, default 0
-        var newCount = currentCount + 1; // Tambah 1 pada count saat ini
-        console.log('Current Badge Count:', currentCount); // Debugging: Cek nilai badge saat ini
-        badge.text(newCount); // Update badge dengan nilai baru
-        console.log('Updated Badge Count:', newCount); // Debugging: Cek nilai badge yang sudah diperbarui
-    });
-</script>
+            // Update badge count
+            var badge = $('#notificationBadge');
+            var currentCount = parseInt(badge.text().trim(), 10) || 0; // Ambil nilai saat ini sebagai integer, default 0
+            var newCount = currentCount + 1; // Tambah 1 pada count saat ini
+            console.log('Current Badge Count:', currentCount); // Debugging: Cek nilai badge saat ini
+            badge.text(newCount); // Update badge dengan nilai baru
+            console.log('Updated Badge Count:', newCount); // Debugging: Cek nilai badge yang sudah diperbarui
+        });
+    </script> -->
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Fungsi untuk mengupdate waktu relatif
-    function updateTime() {
-        document.querySelectorAll('small.text-muted[data-time]').forEach(function (element) {
-            const time = element.getAttribute('data-time');
-            const createdAt = new Date(time);
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - createdAt) / 1000);
+    <!-- <script>
+        $(document).ready(function() {
+            var badge = $('#notificationBadge');
 
-            let displayTime;
+            // Fungsi untuk menampilkan notifikasi baru
+            function addNotification(data) {
+                var notificationItem = `
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="bx bx-info-circle me-2"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">` + data.message + `</span>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+                $('.dropdown-menu').prepend(notificationItem);
 
-            if (diffInSeconds < 60) {
-                displayTime = `${diffInSeconds} detik yang lalu`;
-            } else if (diffInSeconds < 3600) {
-                const diffInMinutes = Math.floor(diffInSeconds / 60);
-                displayTime = `${diffInMinutes} menit yang lalu`;
-            } else if (diffInSeconds < 86400) {
-                const diffInHours = Math.floor(diffInSeconds / 3600);
-                displayTime = `${diffInHours} jam yang lalu`;
-            } else {
-                const diffInDays = Math.floor(diffInSeconds / 86400);
-                displayTime = `${diffInDays} hari yang lalu`;
+                // Update badge count
+                var currentCount = parseInt(badge.text().trim(), 10) || 0;
+                var newCount = currentCount + 1;
+                badge.text(newCount).show(); // Tampilkan badge dan perbarui nilai
+                console.log('Updated Badge Count:', newCount);
             }
 
-            element.textContent = displayTime;
+            // Fungsi untuk inisialisasi Pusher dan berlangganan pada event tertentu
+            function initializePusher(eventName) {
+                var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
+                    cluster: 'ap1',
+                    encrypted: true
+                });
+
+                var channel = pusher.subscribe('admin-channel');
+                channel.bind(eventName, function(data) {
+                    console.log('Received data for ' + eventName + ':', data);
+                    if (typeof window.refreshUserTable === 'function') {
+                        window.refreshUserTable();
+                    }
+                    addNotification(data);
+                });
+            }
+
+            // Set initial badge count
+            var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
+            if (initialCount > 0) {
+                badge.show().text(initialCount);
+            } else {
+                badge.hide();
+            }
+
+            // Inisialisasi Pusher untuk event-event tertentu
+            initializePusher('user.registered');
+            initializePusher('user.deleted');
+            initializePusher('user.status.updated');
+        });
+    </script> -->
+    <script>
+        $(document).ready(function() {
+    var badge = $('#notificationBadge');
+    
+    function addNotification(data) {
+        var notificationItem = `
+            <li data-id="${data.id}">
+                <a class="dropdown-item" href="#" data-id="${data.id}">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="bx bx-info-circle me-2"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">${data.message}</span>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+        $('.dropdown-menu').prepend(notificationItem);
+
+        var currentCount = parseInt(badge.text().trim(), 10) || 0;
+        var newCount = currentCount + 1;
+        badge.text(newCount).show();
+        console.log('Updated Badge Count:', newCount);
+    }
+
+    function initializePusher(eventName) {
+        var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
+            cluster: 'ap1',
+            encrypted: true
+        });
+        
+        var channel = pusher.subscribe('admin-channel');
+        channel.bind(eventName, function(data) {
+            console.log('Received data for ' + eventName + ':', data);
+            if (typeof window.refreshUserTable === 'function') {
+                window.refreshUserTable();
+            }
+            addNotification(data);
         });
     }
 
-    // Update waktu setiap detik
-    setInterval(updateTime, 1000);
+    var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
+    if (initialCount > 0) {
+        badge.show().text(initialCount);
+    } else {
+        badge.hide();
+    }
 
-    // Update waktu pada saat pertama kali
-    updateTime();
+    initializePusher('user.registered');
+    initializePusher('user.deleted');
+    initializePusher('user.status.updated');
+
+    // Handle click on notification item
+    $(document).on('click', '.dropdown-item', function() {
+        var notificationId = $(this).data('id');
+        if (notificationId) {
+            $.ajax({
+                url: '/notifications/mark-as-read/' + notificationId,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Remove the notification item from the dropdown
+                        $('li[data-id="' + notificationId + '"]').remove();
+
+                        // Update badge count
+                        var currentCount = parseInt(badge.text().trim(), 10) || 0;
+                        var newCount = currentCount - 1;
+                        badge.text(newCount);
+                        if (newCount <= 0) {
+                            badge.hide();
+                        }
+                    }
+                }
+            });
+        }
+    });
 });
-</script>
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk mengupdate waktu relatif
+            function updateTime() {
+                document.querySelectorAll('small.text-muted[data-time]').forEach(function(element) {
+                    const time = element.getAttribute('data-time');
+                    const createdAt = new Date(time);
+                    const now = new Date();
+                    const diffInSeconds = Math.floor((now - createdAt) / 1000);
+
+                    let displayTime;
+
+                    if (diffInSeconds < 60) {
+                        displayTime = `${diffInSeconds} detik yang lalu`;
+                    } else if (diffInSeconds < 3600) {
+                        const diffInMinutes = Math.floor(diffInSeconds / 60);
+                        displayTime = `${diffInMinutes} menit yang lalu`;
+                    } else if (diffInSeconds < 86400) {
+                        const diffInHours = Math.floor(diffInSeconds / 3600);
+                        displayTime = `${diffInHours} jam yang lalu`;
+                    } else {
+                        const diffInDays = Math.floor(diffInSeconds / 86400);
+                        displayTime = `${diffInDays} hari yang lalu`;
+                    }
+
+                    element.textContent = displayTime;
+                });
+            }
+
+            // Update waktu setiap detik
+            setInterval(updateTime, 1000);
+
+            // Update waktu pada saat pertama kali
+            updateTime();
+        });
+    </script>
 
 
 
