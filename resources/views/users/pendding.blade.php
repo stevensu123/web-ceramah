@@ -15,8 +15,10 @@
                     </div>
                 </div>
                 <div class="col">
-                   
+                <div class="d-flex container-tmbh-data">
+                <a class="btn btn-primary" href="{{route('users.deleteLog')}}" role="button">Lihat Log User Yang DIhapus</a>
                 </div>
+            </div>
             </div>
             <hr class="" />
             <div class="card-body">

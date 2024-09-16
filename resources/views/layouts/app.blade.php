@@ -172,40 +172,41 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Notifications -->
                             <li class="nav-item lh-1 me-3">
-                                <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                    <i class="bx bx-bell fs-4 lh-0"></i>
-
-                                    <span class="badge bg-danger " id="notificationBadge">{{ $notificationCount }}</span>
-
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                @foreach($notifications as $notification)
-<li data-id="{{ $notification->id }}">
-    <a class="dropdown-item" href="#" data-id="{{ $notification->id }}">
-        <div class="d-flex">
-            <div class="flex-shrink-0 me-3">
-                <i class="bx bx-info-circle me-2"></i>
-            </div>
-            <div class="flex-grow-1">
-                <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
-                <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
-            </div>
-        </div>
+    <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
+        <i class="bx bx-bell fs-4 lh-0"></i>
+        <span class="badge bg-danger" id="notificationBadge">{{ $notificationCount }}</span>
     </a>
-</li>
-@endforeach
+    <ul class="dropdown-menu dropdown-menu-end">
+        @if($notifications->isEmpty())
+            <li>
+                <a class="dropdown-item text-center" href="#">
+                    <span class="fw-semibold d-block">Tidak ada notifikasi untuk Anda</span>
+                </a>
+            </li>
+        @else
+            @foreach($notifications as $notification)
+                <li data-id="{{ $notification->id }}">
+                    <a class="dropdown-item" href="#" data-id="{{ $notification->id }}">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="bx bx-info-circle me-2"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
+                                <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            @endforeach
 
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-center" href="{{ url('/admin/pending-users') }}">
-                                            <i class="bx bx-chevron-down me-2"></i>
-                                            <span class="align-middle">View All</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+            <li>
+                <div class="dropdown-divider"></div>
+            </li>
+        @endif
+    </ul>
+</li>
+
 
 
                             <!-- /Notifications -->
@@ -466,10 +467,10 @@
     </script> -->
     <script>
         $(document).ready(function() {
-    var badge = $('#notificationBadge');
-    
-    function addNotification(data) {
-        var notificationItem = `
+            var badge = $('#notificationBadge');
+
+            function addNotification(data) {
+                var notificationItem = `
             <li data-id="${data.id}">
                 <a class="dropdown-item" href="#" data-id="${data.id}">
                     <div class="d-flex">
@@ -484,70 +485,69 @@
                 </a>
             </li>
         `;
-        $('.dropdown-menu').prepend(notificationItem);
+                $('.dropdown-menu').prepend(notificationItem);
 
-        var currentCount = parseInt(badge.text().trim(), 10) || 0;
-        var newCount = currentCount + 1;
-        badge.text(newCount).show();
-        console.log('Updated Badge Count:', newCount);
-    }
-
-    function initializePusher(eventName) {
-        var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
-            cluster: 'ap1',
-            encrypted: true
-        });
-        
-        var channel = pusher.subscribe('admin-channel');
-        channel.bind(eventName, function(data) {
-            console.log('Received data for ' + eventName + ':', data);
-            if (typeof window.refreshUserTable === 'function') {
-                window.refreshUserTable();
+                var currentCount = parseInt(badge.text().trim(), 10) || 0;
+                var newCount = currentCount + 1;
+                badge.text(newCount).show();
+                console.log('Updated Badge Count:', newCount);
             }
-            addNotification(data);
-        });
-    }
 
-    var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
-    if (initialCount > 0) {
-        badge.show().text(initialCount);
-    } else {
-        badge.hide();
-    }
+            function initializePusher(eventName) {
+                var pusher = new Pusher('a01db3fdb4e4ae7a7ada', {
+                    cluster: 'ap1',
+                    encrypted: true
+                });
 
-    initializePusher('user.registered');
-    initializePusher('user.deleted');
-    initializePusher('user.status.updated');
-
-    // Handle click on notification item
-    $(document).on('click', '.dropdown-item', function() {
-        var notificationId = $(this).data('id');
-        if (notificationId) {
-            $.ajax({
-                url: '/notifications/mark-as-read/' + notificationId,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        // Remove the notification item from the dropdown
-                        $('li[data-id="' + notificationId + '"]').remove();
-
-                        // Update badge count
-                        var currentCount = parseInt(badge.text().trim(), 10) || 0;
-                        var newCount = currentCount - 1;
-                        badge.text(newCount);
-                        if (newCount <= 0) {
-                            badge.hide();
-                        }
+                var channel = pusher.subscribe('admin-channel');
+                channel.bind(eventName, function(data) {
+                    console.log('Received data for ' + eventName + ':', data);
+                    if (typeof window.refreshUserTable === 'function') {
+                        window.refreshUserTable();
                     }
+                    addNotification(data);
+                });
+            }
+
+            var initialCount = parseInt('{{ $notificationCount }}', 10) || 0;
+            if (initialCount > 0) {
+                badge.show().text(initialCount);
+            } else {
+                badge.hide();
+            }
+
+            initializePusher('user.registered');
+            initializePusher('user.deleted');
+            initializePusher('user.status.updated');
+
+            // Handle click on notification item
+            $(document).on('click', '.dropdown-item', function() {
+                var notificationId = $(this).data('id');
+                if (notificationId) {
+                    $.ajax({
+                        url: '/notifications/mark-as-read/' + notificationId,
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                // Remove the notification item from the dropdown
+                                $('li[data-id="' + notificationId + '"]').remove();
+
+                                // Update badge count
+                                var currentCount = parseInt(badge.text().trim(), 10) || 0;
+                                var newCount = currentCount - 1;
+                                badge.text(newCount);
+                                if (newCount <= 0) {
+                                    badge.hide();
+                                }
+                            }
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-
+        });
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

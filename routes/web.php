@@ -48,16 +48,17 @@ Route::group(['middleware' => 'auth',], function () {
     Route::post('/quotes/sotre/auto', [QuoteController::class, 'store_auto'])->name('quotes.autoStore');
     Route::get('/quotes/view/create/auto', [QuoteController::class, 'auto_create'])->name('quotes.autoCreate');
     Route::get('/quotes/view/auto', [QuoteController::class, 'auto_quots'])->name('quotes.auto');
-    
-    Route::resource('/roles', RoleController::class); 
-   
+
+    Route::resource('/roles', RoleController::class);
+
     Route::resource('/users', UsersController::class);
     Route::get('/pending/users', [UsersController::class, 'pendingView'])->name('users.pending-view');
     Route::get('fetch-users', [UsersController::class, 'fetch'])->name('fetch.users');
     Route::put('/update-status/{id}', [UsersController::class, 'updateStatus'])->name('update-status');
-  // web.php
-
-Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+    // web.php
+    Route::get('/user/delete/log', [UsersController::class, 'deletedUsers'])->name('users.deleteLog');
+    Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::get('/clear-deleted-users-log', [UsersController::class, 'clearDeletedUsersLog'])->name('clear.deleted.users.log');
 
 
 

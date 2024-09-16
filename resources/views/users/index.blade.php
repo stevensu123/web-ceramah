@@ -17,7 +17,8 @@
                 </div>
                 <div class="col">
                     <div class="d-flex container-tmbh-data">
-                        <a class="btn btn-primary" href="{{route('users.create')}}" role="button">Tambah Kategori</a>
+                    <a class="btn btn-primary me-2" href="{{route('users.deleteLog')}}" role="button">Lihat Log User Yang DIhapus</a>
+                    <a class="btn btn-primary" href="{{route('users.create')}}" role="button">Tambah user</a>
                     </div>
                 </div>
             </div>
