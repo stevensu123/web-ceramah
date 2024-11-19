@@ -4,12 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\DataTables;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class KategoriController extends Controller
 {
@@ -37,30 +34,54 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
 
-  
-        $file = $request->file('image');
-            ini_set('memory_limit', '512M');
-        
-                $filename   = $file->getClientOriginalName();
-                //Upload File
-                $file->storeAs('public/upload/emotikon/', $filename);
-                //Resize image here
-                $thumbnailpath = public_path('storage/upload/emotikon/' . $filename);
-                $img = Image::make($thumbnailpath)->resize(1280, 720, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                $img->save($thumbnailpath);
- 
+   
+
+      
+        $image = $request->file('image');
+    // Nama file unik
+    $imageName = time() . '-' . $image->getClientOriginalName();
+
+    // Folder tujuan
+    $folderPath = 'upload/emotikon/';
+    $thumbnailFolderPath = 'upload/emotikon/thumbnails/';
+
+    // Buat folder jika belum ada
+    if (!Storage::exists($folderPath)) {
+        Storage::makeDirectory($folderPath);
+    }
+
+    if (!Storage::exists($thumbnailFolderPath)) {
+        Storage::makeDirectory($thumbnailFolderPath);
+    }
+
+    // Simpan gambar asli
+    $filePath = $image->storeAs($folderPath, $imageName);
+
+    // Inisialisasi ImageManager
+    $imgManager = new ImageManager(new Driver());
+
+    // Baca gambar yang diupload
+    $thumbnails = $imgManager->read(Storage::path($filePath));
+
+    // Resize gambar
+    $thumbnails->resize(1270, 1270);
+
+    // Simpan thumbnail
+    $thumbnailPath = $thumbnailFolderPath . $imageName;
+    $thumbnails->save(Storage::path($thumbnailPath));
+      
+
+   
     
-    
+      
         $blog = Kategori::create([
-            'gambar'     => $filename,
+            'gambar'     => $imageName,
             'keterangan'     => $request->keterangan,
             'nama_kategori'     => $request->nama_kategori,
             'status'   => $request->status
         ]);
         // Store the data in your database or perform any necessary actions
-     
+   
 
         // Optionally, redirect back or return a success response
         return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Disimpan!']);

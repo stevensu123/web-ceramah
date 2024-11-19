@@ -78,7 +78,7 @@
 
 @endsection
 
-@section('javascript')
+@push('javascript')
 <script>
     // function showImage() {
     //     var selectBox = document.getElementById("image-select");
@@ -171,4 +171,4 @@
         }
     }
 </script>
-@endsection
+@endpush

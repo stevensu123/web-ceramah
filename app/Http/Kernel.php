@@ -66,5 +66,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'prevent.manual.url.access' => \App\Http\Middleware\PreventManualURLAccess::class,
+      
+
+        
     ];
 }

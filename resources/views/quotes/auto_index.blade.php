@@ -101,7 +101,7 @@
 </div>
 @endsection
 
-@section('javascript')
+@push('script')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.btn-show').forEach(function(button) {
@@ -198,4 +198,4 @@
 
 </script>
 
-@endsection
+@endpush

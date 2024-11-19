@@ -103,7 +103,9 @@ class QuoteController extends Controller
         ]);
 
         // Mengambil kutipan acak dari API Quotable.io
-        $response = Http::get('https://api.quotable.io/random', [
+        $response = Http::withOptions([
+            'verify' => false,
+        ])->get('https://api.quotable.io/random', [
             'minLength' => $request->quote_length === 'short' ? 0 : ($request->quote_length === 'medium' ? 50 : 100),
             'maxLength' => $request->quote_length === 'short' ? 50 : ($request->quote_length === 'medium' ? 100 : 200),
         ]);

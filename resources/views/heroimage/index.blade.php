@@ -17,7 +17,7 @@
                 </div>
                 <div class="col">
                     <div class="d-flex container-tmbh-data">
-                        <a class="btn btn-primary" href="{{route('kategori.create')}}" role="button">Tambah Kategori</a>
+                        <a class="btn btn-primary" href="{{route('heroimage.create')}}" role="button">Tambah Kategori</a>
                     </div>
                 </div>
             </div>
@@ -81,22 +81,8 @@
 </div>
 @endsection
 
-@push('javascript')
-<!-- <script>
-       
-       var table = $('#kategori-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{{ route("kategori.index") }}',
-            columns: [
-                { data: 'nama_kategori', name: 'nama_kategori' },
-                { data: 'gambar', name: 'gambar' },
-                { data: 'status', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ]
-        });
+@section('javascript')
 
-</script> -->
 <script>
     $(document).ready(function() {
         $('.btn-show').click(function() {
@@ -113,46 +99,6 @@
 </script>
 
 <script>
-    $(document).on('click', '.btn-delete', function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
-
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data ini akan dihapus secara permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/kategori/' + id,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Terhapus!',
-                            'Data berhasil dihapus.',
-                            'success'
-                        ).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire(
-                            'Gagal!',
-                            'Data gagal dihapus.',
-                            'error'
-                        );
-                    }
-                });
-            }
-        });
-    });
+ 
 </script>
-@endpush
+@endsection

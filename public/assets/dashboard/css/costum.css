@@ -456,6 +456,8 @@
   }
 }
 
+
+/*costum table */
 /* Tambahkan ini ke file CSS Anda */
 .no-scroll {
   overflow: hidden;
@@ -483,5 +485,50 @@
   margin-right: 4px;
   
 }
+
+.form-label {
+  font-weight: bold;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+#video-name, #video-size, #video-format {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+#videos-table {
+  table-layout: fixed; /* Memastikan lebar kolom tetap */
+  width: 100%; /* Membuat tabel mengisi lebar kontainer */
+}
+
+#videos-table th,
+#videos-table td {
+  overflow: hidden; /* Menghindari overflow */
+  text-overflow: ellipsis; /* Menampilkan elipsis untuk teks yang terlalu panjang */
+  white-space: nowrap; /* Menghindari pembungkusan teks */
+}
+
+#videos-table td {
+  word-wrap: break-word; /* Memastikan teks terbungkus ke bawah */
+  white-space: normal; /* Memungkinkan teks dapat terbungkus di beberapa baris */
+}
+
+#videos-table th:first-child,
+#videos-table td:first-child {
+  width: 50px; /* Menentukan lebar kolom ID */
+  text-align: center; /* Menyelaraskan teks agar di tengah */
+}
+
+#videos-table td:nth-child(4) {
+  max-width: 200px; /* Mengatur lebar maksimal untuk video_path */
+}
+
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 20px; /* Tambahkan jarak di bawah search box */
+    }
+
+/*==================== */
 
 

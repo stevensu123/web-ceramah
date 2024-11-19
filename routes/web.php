@@ -2,13 +2,18 @@
 
 use App\Models\Cerita;
 use App\Models\Kategori;
+use UniSharp\LaravelFilemanager\Lfm;
+use App\Http\Middleware\SetLfmFolder;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\VideoController;
 use App\Http\Controllers\CeritaController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HeroimageController;
+use App\Http\Controllers\FilemanagerController;
 use App\Http\Controllers\NotificationController;
 
 /*~
@@ -20,11 +25,13 @@ use App\Http\Controllers\NotificationController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
+*/ 
+
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Auth::routes();
 Route::group(['middleware' => 'auth',], function () {
@@ -60,8 +67,34 @@ Route::group(['middleware' => 'auth',], function () {
     Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
     Route::get('/clear-deleted-users-log', [UsersController::class, 'clearDeletedUsersLog'])->name('clear.deleted.users.log');
 
+    Route::get('/videos/back', [VideoController::class, 'backToIndexWithModal'])->name('videos.back');
+    Route::resource('videos', VideoController::class);
+    // Route untuk form tambah video dari file
+    Route::get('/videos/create/file', [VideoController::class, 'createFromFile'])->name('videos.create.file');
+    // Route untuk form tambah video dari link YouTube
+    Route::get('/videos/create/youtube', [VideoController::class, 'createFromYouTube'])->name('videos.create.youtube');
+    Route::get('/videos/edit_from_file/{id}', [VideoController::class, 'editFromFile'])->name('videos.edit.from.file');
+    Route::get('/videos/edit_from_youtube/{id}', [VideoController::class, 'editFromYoutube'])->name('videos.edit.from.youtube');
+    
+    Route::resource('/heroimage', HeroimageController::class);
+    // Route::get('filemanager', [FileManagerController::class, 'index']);
+    // Rute dengan middleware auth
+// Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['auth']], function () {
+//     // Rute untuk membuka file manager dengan parameter folder
+//     Route::get('/folder/{folder}', function ($folder) {
+//         return redirect()->to('/laravel-filemanager?folder=' . $folder);
+//     })->name('filemanager.folder');
+
+//     // Rute untuk file manager itu sendiri
+//     \UniSharp\LaravelFilemanager\Lfm::routes();
+// });
 
 
+
+
+ 
+ 
+    
 
     Route::resource('/cerita', CeritaController::class);
     Route::get('/cerita/date/{date}', [CeritaController::class, 'handleDate']);

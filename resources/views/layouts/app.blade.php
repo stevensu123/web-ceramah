@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="{{asset ('assets/dashboard/vendor/libs/apex-charts/apex-charts.css')}}" />
 
     <!-- Page CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/laravel-filemanager/css/lfm.css') }}">
 
     <link rel="stylesheet" href="{{asset ('assets/dashboard/css/costum.css')}}" />
 
@@ -42,7 +43,7 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{asset ('assets/dashboard/js/config.js')}}"></script>
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -120,6 +121,11 @@
                                     <div data-i18n="Basic">Roles</div>
                                 </a>
                             </li>
+                            <li class="menu-item">
+                                <a href="{{route('videos.index')}}" class="menu-link">
+                                    <div data-i18n="Basic">Video</div>
+                                </a>
+                            </li>
 
                         </ul>
                     </li>
@@ -172,40 +178,40 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Notifications -->
                             <li class="nav-item lh-1 me-3">
-    <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
-        <i class="bx bx-bell fs-4 lh-0"></i>
-        <span class="badge bg-danger" id="notificationBadge">{{ $notificationCount }}</span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end">
-        @if($notifications->isEmpty())
-            <li>
-                <a class="dropdown-item text-center" href="#">
-                    <span class="fw-semibold d-block">Tidak ada notifikasi untuk Anda</span>
-                </a>
-            </li>
-        @else
-            @foreach($notifications as $notification)
-                <li data-id="{{ $notification->id }}">
-                    <a class="dropdown-item" href="#" data-id="{{ $notification->id }}">
-                        <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                                <i class="bx bx-info-circle me-2"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
-                                <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            @endforeach
+                                <a class="nav-link" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <i class="bx bx-bell fs-4 lh-0"></i>
+                                    <span class="badge bg-danger" id="notificationBadge">{{ $notificationCount }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if($notifications->isEmpty())
+                                    <li>
+                                        <a class="dropdown-item text-center" href="#">
+                                            <span class="fw-semibold d-block">Tidak ada notifikasi untuk Anda</span>
+                                        </a>
+                                    </li>
+                                    @else
+                                    @foreach($notifications as $notification)
+                                    <li data-id="{{ $notification->id }}">
+                                        <a class="dropdown-item" href="#" data-id="{{ $notification->id }}">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 me-3">
+                                                    <i class="bx bx-info-circle me-2"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <span class="fw-semibold d-block">{{ $notification->data['message'] }}</span>
+                                                    <small class="text-muted" data-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @endforeach
 
-            <li>
-                <div class="dropdown-divider"></div>
-            </li>
-        @endif
-    </ul>
-</li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </li>
 
 
 
@@ -347,13 +353,14 @@
     <!-- Page JS -->
     <script src="{{asset('assets/dashboard/js/dashboards-analytics.js')}}"></script>
 
-
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+
+
 
     <!-- <script>
         // Inisialisasi badge dengan nilai dari variabel Blade
@@ -586,17 +593,8 @@
         });
     </script>
 
-
-
-
-
-
-
-
-
-
 </body>
 @include('sweetalert::alert')
-@yield('javascript')
+@stack('javascript')
 
 </html>
